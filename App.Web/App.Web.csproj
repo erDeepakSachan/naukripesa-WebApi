@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+      <MvcRazorCompileOnPublish>true</MvcRazorCompileOnPublish>
+      <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\App.Service\App.Service.csproj" />
+      <ProjectReference Include="..\App.Util\App.Util.csproj" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <PackageReference Include="dotenv.net" Version="3.2.1" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.3.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.36" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.36">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.36" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.36">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.29" />
+      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.9.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.9.0" />
+    </ItemGroup>
+
+
+
+</Project>

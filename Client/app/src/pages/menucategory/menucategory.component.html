@@ -1,0 +1,150 @@
+<div id="neo-listing-container" class="row">
+  <div class="box col-md-12" style="margin-top: 0px">
+    <div class="box-inner">
+      <div class="box-header well" data-original-title="">
+        <h2><i class="glyphicon glyphicon-edit"></i> Manage Menu Category</h2>
+      </div>
+      <div class="box-content">
+        <div
+          class="input-group margin col-md-6 col-sm-12"
+          style="margin-left: 0px"
+        >
+          <input
+            type="text"
+            (keyup)="handleKeyup($event)"
+            [(ngModel)]="searchText"
+            class="form-control neo-round"
+          />
+          <span class="input-group-btn">
+            <button
+              id="btn-refresh"
+              class="btn btn-primary btn-flat neo-round"
+              (click)="clearSearch()"
+              style="margin-left: 5px; margin-right: 5px"
+              type="button"
+            >
+              <i class="fa fa-sync"></i>
+            </button>
+            <button
+              id="btn-search"
+              class="btn btn-primary btn-flat neo-round"
+              (click)="load()"
+              type="button"
+            >
+              <i class="fa fa-search"></i>&nbsp;&nbsp;FIND
+            </button>
+          </span>
+        </div>
+        <div
+          class="input-group margin col-md-6 col-sm-12"
+          style="margin-left: 0px"
+        >
+          <button
+            (click)="_new()"
+            class="btn btn-primary btn-flat neo-only-desktop"
+            style="float: right"
+          >
+            <i class="fa fa-plus"></i> Add New Menu Category
+          </button>
+        </div>
+        <app-pagination
+          #paginationMobile
+          [className]="`neo-only-mobile`"
+          [groupName]="`menucategory.component`"
+          (pageChange)="onPageChange($event)"
+        ></app-pagination>
+        <table
+          class="table table-bordered table-striped table-condensed zui-table"
+          style="min-height: 352px"
+        >
+          <thead>
+            <tr>
+              <th>Id </th>
+              <th>App Icon</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>MenuOrder</th>
+
+              <th class="zui-sticky-col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-content">
+            <tr *ngIf="data.length == 0">
+              <td
+                colspan="6"
+                style="width: 100%; height: 44px; text-align: center"
+              >
+                No Records found.
+              </td>
+            </tr>
+            <tr
+              [attr.data-row-id]="item.MenuCategoryId"
+              *ngFor="let item of data; let i = index; let last = last"
+            >
+              <ng-container *ngIf="item.MenuCategoryId === 0">
+                <td
+                  *ngIf="
+                    i === 0 || data[i - 1].MenuCategoryId !== 0;
+                    else middleEmptyRow
+                  "
+                  style="height: 32px; text-align: center; border-bottom: none"
+                  class="no-hover"
+                  colspan="6"
+                ></td>
+                <ng-template #middleEmptyRow>
+                  <td
+                    *ngIf="
+                      !last && data[i + 1]?.MenuCategoryId === 0;
+                      else lastEmptyRow
+                    "
+                    style="
+                      height: 32px;
+                      text-align: center;
+                      border-top: none;
+                      border-bottom: none;
+                    "
+                    class="no-hover"
+                    colspan="6"
+                  ></td>
+                </ng-template>
+                <ng-template #lastEmptyRow>
+                  <td
+                    style="height: 32px; text-align: center; border-top: none"
+                    class="no-hover"
+                    colspan="6"
+                  ></td>
+                </ng-template>
+              </ng-container>
+              <ng-container *ngIf="item.MenuCategoryId !== 0">
+                <td>{{ item.MenuCategoryId }}</td>
+                <td><i class="fa {{item.AppIcon?.CssClass}}" [style.color]="item.AppIcon?.IconColor"></i>{{ item.AppIcon?.Name }}</td>
+                <td>{{ item.Name }}</td>
+                <td>{{ item.Description }}</td>
+                <td>{{ item.MenuOrder }}</td>
+
+                <td>
+                  <a href="javascript:void(0);" (click)="edit(item)">Edit</a> |
+                  <a
+                    href="javascript:void(0);"
+                    (click)="delete(item.MenuCategoryId)"
+                    >Delete</a
+                  >
+                </td>
+              </ng-container>
+            </tr>
+          </tbody>
+        </table>
+        <app-pagination
+          #paginationDesktop
+          [className]="`neo-only-desktop`"
+          [groupName]="`menucategory.component`"
+          (pageChange)="onPageChange($event)"
+        ></app-pagination>
+      </div>
+    </div>
+    <div *ngIf="svc.loading$ | async" class="overlay"></div>
+    <div *ngIf="svc.loading$ | async" class="loading-img"></div>
+  </div>
+</div>
+<edit-modal #editModal (shouldRefresh)="onShouldRefresh($event)"></edit-modal>
+<add-modal #addModal (shouldRefresh)="onShouldRefresh($event)"></add-modal>

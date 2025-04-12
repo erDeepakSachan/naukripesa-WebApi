@@ -1,0 +1,26 @@
+window.AppSettings = {
+    "ApiBaseUrl": "http://localhost:5013/api",
+    "AppName": "Admin Panel 54",
+    "LogoPath": "/img/logo.png"
+} ;
+
+function loadScriptSync(src) {
+    var script = document.createElement("script");
+    script.src = src;
+    script.async = false;
+    script.defer = false;
+
+    var isLoaded = false;
+    script.onload = function () {
+        isLoaded = true;
+    };
+    script.onerror = function () {
+        console.error("Failed to load script:", src);
+        isLoaded = true;
+    };
+
+    document.head.appendChild(script);
+}
+
+loadScriptSync(`${window.AppSettings.ApiBaseUrl}/Home/NotyOptions?forError=false`);
+loadScriptSync(`${window.AppSettings.ApiBaseUrl}/Home/NotyOptions?forError=true`);

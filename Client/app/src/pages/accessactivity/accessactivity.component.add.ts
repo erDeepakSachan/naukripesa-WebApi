@@ -1,0 +1,126 @@
+import { Component, ElementRef, EventEmitter, ViewChild, Input, inject, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, NgForm } from '@angular/forms';
+import { Observable, of, finalize, BehaviorSubject } from 'rxjs';
+import { AccessActivity, emptyAccessActivity } from '../page-entities/accessactivity.entity';
+import { DdlItem } from '../page-entities/ddl-item.entity';
+import { AccessActivityService } from './accessactivity.service';
+import { jQ, hideShowModal, validateForm, removeValidationErrors } from './../../shared/jquery-utils';
+
+
+@Component({
+  imports: [CommonModule, FormsModule],
+  selector: 'add-modal',
+  template: `
+        <div #modal class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header box-header well">
+                    <h2 class="modal-title" id="model-title-h2"><i class="fa fa-plus"></i> AccessActivity New Setting</h2>
+                    <div class="box-icon">
+                        <a href="#" data-dismiss="modal" data-neo-modal="true" class="btn btn-close btn-round btn-default">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </a>
+                    </div>
+                </div>
+                <form #neoAddForm="ngForm" (submit)="onSubmit(neoAddForm)" class="box neo-add-form" novalidate>
+                <div class="modal-body">
+                    <div class="row edit-form-field-container">
+                        
+                <div class="col-lg-12">
+                  <div class="form-group">
+                    <label>AccessActivityId <span class="field-validation-valid" data-valmsg-for="AccessActivityId" data-valmsg-replace="true"></span>
+                    </label>
+                    <input [(ngModel)]="obj.AccessActivityId" type="text" name="AccessActivityId" placeholder="AccessActivityId" class="form-control" data-val="true" data-val-required="The AccessActivityId field is required." autocomplete="off" />
+                  </div>
+                </div>
+                
+
+                <div class="col-lg-12">
+                  <div class="form-group">
+                    <label>UserId <span class="field-validation-valid" data-valmsg-for="UserId" data-valmsg-replace="true"></span>
+                    </label>
+                    <input [(ngModel)]="obj.UserId" type="text" name="UserId" placeholder="UserId" class="form-control" data-val="true" data-val-required="The UserId field is required." autocomplete="off" />
+                  </div>
+                </div>
+                
+
+                <div class="col-lg-12">
+                  <div class="form-group">
+                    <label>UserSessionId <span class="field-validation-valid" data-valmsg-for="UserSessionId" data-valmsg-replace="true"></span>
+                    </label>
+                    <input [(ngModel)]="obj.UserSessionId" type="text" name="UserSessionId" placeholder="UserSessionId" class="form-control" data-val="true" data-val-required="The UserSessionId field is required." autocomplete="off" />
+                  </div>
+                </div>
+                
+
+                <div class="col-lg-12">
+                  <div class="form-group">
+                    <label>ActivityType <span class="field-validation-valid" data-valmsg-for="ActivityType" data-valmsg-replace="true"></span>
+                    </label>
+                    <input [(ngModel)]="obj.ActivityType" type="text" name="ActivityType" placeholder="ActivityType" class="form-control" data-val="true" data-val-required="The ActivityType field is required." autocomplete="off" />
+                  </div>
+                </div>
+                
+
+                <div class="col-lg-12">
+                  <div class="form-group">
+                    <label>CreatedOn <span class="field-validation-valid" data-valmsg-for="CreatedOn" data-valmsg-replace="true"></span>
+                    </label>
+                    <input [(ngModel)]="obj.CreatedOn" type="text" name="CreatedOn" placeholder="CreatedOn" class="form-control" data-val="true" data-val-required="The CreatedOn field is required." autocomplete="off" />
+                  </div>
+                </div>
+                
+
+                <div class="col-lg-12">
+                  <div class="form-group">
+                    <label>User <span class="field-validation-valid" data-valmsg-for="User" data-valmsg-replace="true"></span>
+                    </label>
+                    <input [(ngModel)]="obj.User" type="text" name="User" placeholder="User" class="form-control" data-val="true" data-val-required="The User field is required." autocomplete="off" />
+                  </div>
+                </div>
+                
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-flat fa fa-times" data-dismiss="modal">&nbsp;&nbsp;&nbsp;Close</button>
+                <button type="submit" class="btn btn-info btn-flat fa fa-save">&nbsp;&nbsp;&nbsp;Save changes</button>
+                </div>
+                <div *ngIf="api.loading$ | async" class="overlay"></div>
+                <div *ngIf="api.loading$ | async" class="loading-img"></div>
+                </form>
+            </div>
+        </div>
+        </div> 
+  `})
+export class AddComponent {
+  @ViewChild('neoAddForm', { read: ElementRef }) formElement!: ElementRef;
+  @ViewChild('modal', { static: false }) modal!: ElementRef;
+  @Output() shouldRefresh = new EventEmitter<boolean>();
+  @Input() obj: AccessActivity = emptyAccessActivity();
+
+  api = inject(AccessActivityService);
+  companyList: DdlItem[] = [];
+
+  private getModal(): HTMLElement {
+    return this.modal.nativeElement;
+  }
+
+  loadForm(): void {
+    removeValidationErrors(this.formElement);
+    this.obj = emptyAccessActivity();
+    hideShowModal(this.getModal(), 'show');
+  }
+
+  onSubmit(form: NgForm): void {
+    var isValid = validateForm(this.formElement)
+    if (isValid) {
+      this.api.add(this.obj).subscribe((resp) => {
+        alert(resp.message);
+        hideShowModal(this.getModal(), 'hide');
+        this.shouldRefresh.emit(true);
+      });
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/app-config.js",
+      "destination": "/api/config"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

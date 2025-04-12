@@ -1,0 +1,57 @@
+<!-- topbar starts -->
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-inner">
+    <button type="button" class="navbar-toggle pull-left animated flip">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="/dashboard">
+      <img alt="{{appSettings.AppName}}" src="{{appSettings.LogoPath}}" class="hidden-xs" />
+      <span>{{appSettings.AppName}}</span>
+    </a>
+    <!-- user dropdown starts -->
+    <div class="btn-group pull-right">
+      <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <i class="fas fa-user"></i><span class="hidden-sm hidden-xs"> {{displayName}} </span>
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a href="javascript:void(0);" (click)="logout()">Logout</a></li>
+        <!-- <li><a href="" onclick="NeoJsFunc_ClearAppCache();">Clear Cache</a></li> -->
+      </ul>
+    </div>
+    <!-- user dropdown ends -->
+  </div>
+</div>
+<!-- topbar ends -->
+<div class="ch-container">
+  <div class="row">
+    <!-- left menu starts -->
+    <div class="col-sm-2 col-lg-2">
+      <div class="sidebar-nav">
+        <div class="nav-canvas">
+          <div class="nav-sm nav nav-stacked">
+          </div>
+          <app-left-menu></app-left-menu>
+        </div>
+      </div>
+    </div>
+    <!-- left menu ends -->
+    <div id="content" class="col-lg-10 col-sm-10">
+      <!-- content starts -->
+      <router-outlet />
+      <!-- content ends -->
+    </div>
+  </div>
+  <hr>
+  <footer class="row">
+    <p class="col-md-9 col-sm-9 col-xs-12 copyright">
+      &copy; {{currentYear}}
+    </p>
+    <p class="col-md-3 col-sm-3 col-xs-12 powered-by">
+      Powered by: <a target="_blank" href="https://github.com/mataprasad">Deepak Sachan</a>
+    </p>
+  </footer>
+</div>

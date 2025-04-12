@@ -1,0 +1,42 @@
+<div class="ch-container">
+  <div class="row">
+
+    <div class="row">
+      <div class="col-md-12 center login-header">
+        <h2>Welcome to {{this.ctxSvc.context.AppSettings?.AppName!}}</h2>
+      </div>
+      <!--/span-->
+    </div><!--/row-->
+    <div class="row">
+      <div class="well col-md-5 center login-box">
+        <div class="alert alert-info">
+          Please login with your Email and Password.
+        </div>
+        <!-- @if (!string.IsNullOrWhiteSpace(ViewBag.Error))
+              {
+                  <div class="alert alert-danger">@ViewBag.Error</div>
+              } -->
+        <form class="form-horizontal" (ngSubmit)="login()" novalidate>
+          <fieldset>
+            <div class="input-group input-group-lg">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i></span>
+              <input [(ngModel)]="email" name="email" id="email" placeholder="Email here..." type="text"
+                class="form-control" />
+            </div>
+            <div class="clearfix"></div><br>
+            <div class="input-group input-group-lg">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-lock red"></i></span>
+              <input [(ngModel)]="password" name="Password" id="Password" placeholder="Password here..." type="password"
+                class="form-control" />
+            </div>
+            <div class="clearfix"></div>
+            <p class="center col-md-5">
+              <button type="submit" class="btn btn-primary">Login</button>
+            </p>
+          </fieldset>
+        </form>
+      </div>
+      <!--/span-->
+    </div><!--/row-->
+  </div><!--/fluid-row-->
+</div><!--/.fluid-container-->

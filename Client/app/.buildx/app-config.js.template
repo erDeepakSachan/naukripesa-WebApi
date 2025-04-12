@@ -1,0 +1,22 @@
+window.AppSettings = __CONFIG__TEMPL__ ;
+
+function loadScriptSync(src) {
+    var script = document.createElement("script");
+    script.src = src;
+    script.async = false;
+    script.defer = false;
+
+    var isLoaded = false;
+    script.onload = function () {
+        isLoaded = true;
+    };
+    script.onerror = function () {
+        console.error("Failed to load script:", src);
+        isLoaded = true;
+    };
+
+    document.head.appendChild(script);
+}
+
+loadScriptSync(`${window.AppSettings.ApiBaseUrl}/Home/NotyOptions?forError=false`);
+loadScriptSync(`${window.AppSettings.ApiBaseUrl}/Home/NotyOptions?forError=true`);

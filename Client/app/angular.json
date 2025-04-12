@@ -1,0 +1,134 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "app": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "dist/app",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "content-template/css/bootstrap-united.min.css",
+              "content-template/css/charisma-app.css",
+              "content-template/bower_components/fullcalendar/dist/fullcalendar.css",
+              "content-template/bower_components/fullcalendar/dist/fullcalendar.print.css",
+              "content-template/bower_components/chosen/chosen.min.css",
+              "content-template/bower_components/select2/css/select2.min.css",
+              "content-template/bower_components/colorbox/example3/colorbox.css",
+              "content-template/bower_components/responsive-tables/responsive-tables.css",
+              "content-template/css/jquery.noty.css",
+              "content-template/css/noty_theme_default.css",
+              "content-template/css/elfinder.min.css",
+              "content-template/css/elfinder.theme.css",
+              "content-template/css/jquery.iphone.toggle.css",
+              "content-template/css/animate.min.css",
+              "content-template/fa-web/css/all.min.css",
+              "content-template/jquery-fab/css/jquery-fab-button.min.css",
+              "content-template/jquery-fab/css/jquery-fab-button.min.css",
+              "src/styles.css"
+            ],
+            "scripts": [
+              "content-template/bower_components/jquery/jquery.min.js",
+              "content-template/bower_components/bootstrap/dist/js/bootstrap.min.js",
+              "content-template/bower_components/select2/js/select2.min.js",
+              "content-template/js/jquery.cookie.js",
+              "content-template/bower_components/moment/min/moment.min.js",
+              "content-template/bower_components/fullcalendar/dist/fullcalendar.min.js",
+              "content-template/js/jquery.dataTables.min.js",
+              "content-template/bower_components/chosen/chosen.jquery.min.js",
+              "content-template/bower_components/colorbox/jquery.colorbox-min.js",
+              "content-template/js/jquery.noty.js",
+              "content-template/bower_components/responsive-tables/responsive-tables.js",
+              "content-template/js/jquery.raty.min.js",
+              "content-template/js/jquery.iphone.toggle.js",
+              "content-template/js/jquery.autogrow-textarea.js",
+              "content-template/js/jquery.bootpag.min.js",
+              "content-template/jquery-fab/js/jquery-fab-button.min.js",
+              "content-template/js/charisma.js",
+              "content-template/js/jquery.validate.min.js",
+              "content-template/js/jquery.validate.unobtrusive.min.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "2MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {},
+          "configurations": {
+            "production": {
+              "buildTarget": "app:build:production"
+            },
+            "development": {
+              "buildTarget": "app:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "tsconfig.spec.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.css"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    }
+  }
+}

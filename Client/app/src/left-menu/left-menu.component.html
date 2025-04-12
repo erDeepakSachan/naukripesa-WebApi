@@ -1,0 +1,28 @@
+<ul class="nav nav-pills nav-stacked main-menu">
+      <li class="accordion" *ngFor="let item of menu.Nodes; let i0 = index;">
+            <a class="accordion-toggle-a" href="#">
+                  <i class="fas {{item.IconCss}}" [style.color]="item.IconColor"></i>
+                  <span>
+                        {{item.Text}}
+                  </span>
+            </a>
+            <ul *ngIf="item.Nodes?.length! >  0" class="nav nav-pills nav-stacked">
+                  <li routerLinkActive="active" [class.accordion]="item1.Nodes?.length! >  0" *ngFor="let item1 of item.Nodes;let i1 = index;">
+                        <a *ngIf="item1.Nodes?.length! ==  0" [routerLink]="item1.NavUrl"><i class="fas {{item1.IconCss}}"
+                                    [style.color]="item1.IconColor"></i><span> {{item1.Text}}</span></a>
+                        <a *ngIf="item1.Nodes?.length! >  0" href="#" class="accordion-toggle-a"><i class="fas {{item1.IconCss}}"
+                              [style.color]="item1.IconColor"></i><span> {{item1.Text}}</span></a>
+                        <ul *ngIf="item1.Nodes?.length! >  0" class="nav nav-pills nav-stacked">
+                              <li routerLinkActive="active" *ngFor="let item2 of item1.Nodes;let i2 = index;">
+                                    <a routerLink="/{{item2.NavUrl}}">
+                                          <i class="fas {{item2.IconCss}}" [style.color]="item2.IconColor"></i>
+                                          <span>
+                                                {{item2.Text}}
+                                          </span>
+                                    </a>
+                              </li>
+                        </ul>
+                  </li>
+            </ul>
+      </li>
+</ul>

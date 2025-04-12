@@ -1,0 +1,41 @@
+import { generateAppSettingsFileFromEnv } from '../buildx/common-utils.js';
+
+async function handler(req, res) {
+  try {
+    const template = `window.AppSettings = __CONFIG__TEMPL__ ;`;
+    let config = await generateAppSettingsFileFromEnv(template);
+    config += `
+    function loadScriptSync(src) {
+        var script = document.createElement("script");
+        script.src = src;
+        script.async = false;
+        script.defer = false;
+
+        var isLoaded = false;
+        script.onload = function () {
+            isLoaded = true;
+        };
+        script.onerror = function () {
+            console.error("Failed to load script:", src);
+            isLoaded = true;
+        };
+
+        document.head.appendChild(script);
+    }
+
+    loadScriptSync("${process.env.API_BASE_URL}/Home/NotyOptions?forError=false");
+    loadScriptSync("${process.env.API_BASE_URL}/Home/NotyOptions?forError=true");
+    `;
+
+    if (!config) {
+      res.status(500).json({ error: "Failed to generate app config" });
+      return;
+    }
+    res.setHeader("Content-Type", "application/javascript");
+    res.status(200).send(config);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export default handler;

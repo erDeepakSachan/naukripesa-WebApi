@@ -1,0 +1,68 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0"/>
+        <PackageReference Include="MSTest.TestAdapter" Version="2.2.7"/>
+        <PackageReference Include="MSTest.TestFramework" Version="2.2.7"/>
+        <PackageReference Include="coverlet.collector" Version="3.1.0"/>
+        <PackageReference Include="SmartFormat.NET" Version="3.5.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\App.Core\App.Core.csproj" />
+      <ProjectReference Include="..\App.Entity\App.Entity.csproj" />
+      <ProjectReference Include="..\App.Repository\App.Repository.csproj" />
+      <ProjectReference Include="..\App.Service\App.Service.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Template\RepositoryTemplate.cs.txt" />
+      <Content Include="Template\RepositoryTemplate.cs.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Template\A" />
+      <None Include="Template\ServiceTemplate.cs.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Remove="Template\ControllerTemplate.cs.txt" />
+      <Content Include="Template\ControllerTemplate.cs.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Template\service-template.ts.txt" />
+      <Content Include="Template\service-template.ts.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Template\component-template.ts.txt" />
+      <Content Include="Template\component-template.ts.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Template\component-template.html.txt" />
+      <Content Include="Template\component-template.html.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Template\component-template.edit.ts.txt" />
+      <Content Include="Template\component-template.edit.ts.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Template\component-template.css.txt" />
+      <Content Include="Template\component-template.css.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Template\component-template.add.ts.txt" />
+      <Content Include="Template\component-template.add.ts.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="AngularPage\.keep" />
+      <Content Include="AngularPage\.keep">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+</Project>
