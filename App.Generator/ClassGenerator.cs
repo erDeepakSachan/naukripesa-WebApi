@@ -35,9 +35,9 @@ public class ClassGenerator
                 Columns = GetPublicProps(p)
             })
             .ToList();
-        // GenerateRepository(clazzes);
-        // GenerateService(clazzes);
-        // GenerateController(clazzes);
+        //GenerateRepository(clazzes);
+        //GenerateService(clazzes);
+        //GenerateController(clazzes);
         GenerateAngularFiles(clazzes);
     }
     
@@ -54,9 +54,15 @@ public class ClassGenerator
         var directory = "../../../Repository";
         foreach (var clazz in clazzes)
         {
-            var clazzDef = Smart.Format(template, new { clazzName = clazz.Name });
-            var clazzFile = Path.Combine(directory, $"{clazz.Name}Repository.cs");
-            File.WriteAllText(clazzFile, clazzDef);
+            try
+            {
+                var clazzDef = Smart.Format(template, new { clazzName = clazz.Name });
+                var clazzFile = Path.Combine(directory, $"{clazz.Name}Repository.cs");
+                File.WriteAllText(clazzFile, clazzDef);
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 
@@ -66,9 +72,16 @@ public class ClassGenerator
         var directory = "../../../Service";
         foreach (var clazz in clazzes)
         {
-            var clazzDef = Smart.Format(template, new { clazzName = clazz.Name });
-            var clazzFile = Path.Combine(directory, $"{clazz.Name}Service.cs");
-            File.WriteAllText(clazzFile, clazzDef);
+            try
+            {
+                var clazzDef = Smart.Format(template, new { clazzName = clazz.Name });
+                var clazzFile = Path.Combine(directory, $"{clazz.Name}Service.cs");
+                File.WriteAllText(clazzFile, clazzDef);
+            }
+            catch (Exception)
+            {
+
+            }
         }
     }
 
@@ -78,9 +91,16 @@ public class ClassGenerator
         var directory = "../../../Controller";
         foreach (var clazz in clazzes)
         {
-            var clazzDef = Smart.Format(template, new { clazzName = clazz.Name, DisplayName = clazz.DisplayName });
-            var clazzFile = Path.Combine(directory, $"{clazz.Name}Controller.cs");
-            File.WriteAllText(clazzFile, clazzDef);
+            try
+            {
+                var clazzDef = Smart.Format(template, new { clazzName = clazz.Name, DisplayName = clazz.DisplayName });
+                var clazzFile = Path.Combine(directory, $"{clazz.Name}Controller.cs");
+                File.WriteAllText(clazzFile, clazzDef);
+            }
+            catch (Exception)
+            {
+
+            }
         }
     }
 
@@ -92,19 +112,25 @@ public class ClassGenerator
         var _routes = new StringBuilder();
         foreach (var clazz in clazzes)
         {
-            clazzDir = Path.Combine(directory, $"{clazz.NameLower}");
-            if (!Directory.Exists(clazzDir))
+            try
             {
-                Directory.CreateDirectory(clazzDir);
-            }
+                clazzDir = Path.Combine(directory, $"{clazz.NameLower}");
+                if (!Directory.Exists(clazzDir))
+                {
+                    Directory.CreateDirectory(clazzDir);
+                }
 
-            GenerateEntity(clazz);
-            GenerateService(clazz);
-            GenerateComponentTs(clazz);
-            GenerateComponentHtml(clazz);
-            GenerateComponentAddEdit(clazz);
-            GenerateComponentAddEdit(clazz, true);
-            GenerateRoute(clazz, ref _import, ref _routes);
+                GenerateEntity(clazz);
+                GenerateService(clazz);
+                GenerateComponentTs(clazz);
+                GenerateComponentHtml(clazz);
+                GenerateComponentAddEdit(clazz);
+                GenerateComponentAddEdit(clazz, true);
+                GenerateRoute(clazz, ref _import, ref _routes);
+            }
+            catch (Exception)
+            {
+            }
         }
         
         Console.WriteLine(_import.ToString());

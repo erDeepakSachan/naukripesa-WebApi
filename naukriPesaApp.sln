@@ -19,13 +19,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Generator", "App.Genera
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Dto", "App.Dto\App.Dto.csproj", "{6FA31212-FA85-46D6-B1E3-4897AE75DDC8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBScoffolding", "DBScoffolding\DBScoffolding.csproj", "{3EE355FF-B870-459E-AE47-A6F4D59CB8F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{4D95D1CA-6A92-42A9-9F6E-F59643383E1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -60,5 +59,15 @@ Global
 		{6FA31212-FA85-46D6-B1E3-4897AE75DDC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FA31212-FA85-46D6-B1E3-4897AE75DDC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FA31212-FA85-46D6-B1E3-4897AE75DDC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EE355FF-B870-459E-AE47-A6F4D59CB8F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EE355FF-B870-459E-AE47-A6F4D59CB8F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EE355FF-B870-459E-AE47-A6F4D59CB8F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EE355FF-B870-459E-AE47-A6F4D59CB8F7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6E3635AD-65E1-4217-9401-B7CB3BCB6E6A}
 	EndGlobalSection
 EndGlobal

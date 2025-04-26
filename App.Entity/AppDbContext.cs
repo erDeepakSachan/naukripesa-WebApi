@@ -30,6 +30,8 @@ namespace App.Entity
         public virtual DbSet<UserSession> UserSessions { get; set; } = null!;
         public virtual DbSet<UserType> UserTypes { get; set; } = null!;
         public virtual DbSet<Webpage> Webpages { get; set; } = null!;
+        public virtual DbSet<Jobdetail> Jobdetails { get; set; }
+        public virtual DbSet<Joblocation> Joblocations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -546,6 +548,50 @@ namespace App.Entity
                 entity.Property(e => e.Name)
                     .HasMaxLength(100)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Jobdetail>(entity =>
+            {
+                entity.HasKey(e => e.JobDetailId).HasName("PRIMARY");
+
+                entity.ToTable("jobdetails");
+
+                entity.HasIndex(e => e.CompanyId, "FK_JobDetails_Company_idx");
+
+                entity.HasIndex(e => e.JobLocationId, "FK_JobDetails_JobLocation_idx");
+
+                entity.Property(e => e.JobDetailId).HasColumnName("JobDetailID");
+                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
+                entity.Property(e => e.ContactNumber).HasMaxLength(12);
+                entity.Property(e => e.Department).HasMaxLength(128);
+                entity.Property(e => e.InterviewDate).HasColumnType("datetime");
+                entity.Property(e => e.InterviewLocation).HasMaxLength(512);
+                entity.Property(e => e.InterviewTime).HasColumnType("time");
+                entity.Property(e => e.JobLocationId).HasColumnName("JobLocationID");
+                entity.Property(e => e.OtherDetail).HasColumnType("text");
+                entity.Property(e => e.Qualification).HasMaxLength(512);
+
+                entity.HasOne(d => d.Company).WithMany(p => p.Jobdetails)
+                    .HasForeignKey(d => d.CompanyId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_JobDetails_Company");
+
+                entity.HasOne(d => d.JobLocation).WithMany(p => p.Jobdetails)
+                    .HasForeignKey(d => d.JobLocationId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_JobDetails_JobLocation");
+            });
+
+            modelBuilder.Entity<Joblocation>(entity =>
+            {
+                entity.HasKey(e => e.JobLocationId).HasName("PRIMARY");
+
+                entity.ToTable("joblocation");
+
+                entity.Property(e => e.JobLocationId).HasColumnName("JobLocationID");
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+                entity.Property(e => e.Location).HasMaxLength(100);
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<Webpage>(entity =>

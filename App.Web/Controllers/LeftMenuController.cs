@@ -68,7 +68,7 @@ namespace App.Web.Controllers
                             row = UserPermissions[j];
                             if (Convert.ToInt32(row.MenuCategoryMenuCategoryID) ==
                                 Convert.ToInt32(dsMenuCategory[i].MenuCategoryID)
-                                && row.WebpageParentWebpageID == null)
+                                && (row.WebpageParentWebpageID == null || row.WebpageParentWebpageID == 0))
                             {
                                 if ((bool)row.IsVisible == true)
                                 {
@@ -78,7 +78,7 @@ namespace App.Web.Controllers
                                     n.IconCss = Convert.ToString(row.AppIconCss);
                                     n.IconColor = Convert.ToString(row.AppIconColor);
                                     n.ControllerName = Convert.ToString(row.WebpageURL).Replace(".aspx", "");
-                                    n.NavUrl = Convert.ToString(row.PageURL).Replace(".aspx", "");
+                                    n.NavUrl = Convert.ToString(row.WebpageURL).Replace(".aspx", "");
                                     AddChildNodes(
                                         userGroupPermissionService.GetPermissionByParentWebpage(userGroupId,
                                             Convert.ToInt32(row.WebpageID)), n);
@@ -118,7 +118,7 @@ namespace App.Web.Controllers
                         childnode.IconCss = Convert.ToString(CurrentRow.AppIconCss);
                         childnode.IconColor = Convert.ToString(CurrentRow.AppIconColor);
                         childnode.ControllerName = Convert.ToString(CurrentRow.WebpageURL).Replace(".aspx", "");
-                        childnode.NavUrl = Convert.ToString(CurrentRow.PageURL).Replace(".aspx", "");
+                        childnode.NavUrl = Convert.ToString(CurrentRow.WebpageURL).Replace(".aspx", "");
                     }
                     Node.Nodes.Add(childnode);
                 }

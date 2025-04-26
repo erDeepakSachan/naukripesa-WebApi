@@ -65,8 +65,16 @@ namespace App.Web.Controllers
                 notyOpt["type"] = type;
             }
 
-            return Content("var " + varKey + " = " + notyOpt.ToString() + ";");
+            var varThemeJs = $"localStorage.setItem('app-theme-css','bootstrap-cerulean');";
+            var currentTheme = NeoContext.CurrentTheme(NeoAuthorization);
+            if (!string.IsNullOrWhiteSpace(currentTheme))
+            {
+                varThemeJs = $"localStorage.setItem('app-theme-css','{currentTheme?.Trim()}');";
+            }
+
+            return Content($"var {varKey} = {notyOpt} ; {varThemeJs}");
         }
+
         [HttpPost]
         [Route("check-auth-status")]
         public IActionResult CheckAuthStatus()
