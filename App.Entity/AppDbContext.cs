@@ -575,11 +575,6 @@ namespace App.Entity
                     .HasForeignKey(d => d.CompanyId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_JobDetails_Company");
-
-                entity.HasOne(d => d.JobLocation).WithMany(p => p.Jobdetails)
-                    .HasForeignKey(d => d.JobLocationId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_JobDetails_JobLocation");
             });
 
             modelBuilder.Entity<Joblocation>(entity =>

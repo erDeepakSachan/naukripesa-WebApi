@@ -18,6 +18,4 @@ public partial class Joblocation
     public DateTime? ModifiedOn { get; set; }
 
     public bool? IsArchived { get; set; }
-
-    public virtual ICollection<Jobdetail> Jobdetails { get; set; } = new List<Jobdetail>();
 }
