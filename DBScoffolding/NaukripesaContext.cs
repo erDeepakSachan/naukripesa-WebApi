@@ -207,7 +207,7 @@ public partial class NaukripesaContext : DbContext
             entity.Property(e => e.Department).HasMaxLength(128);
             entity.Property(e => e.InterviewDate).HasColumnType("datetime");
             entity.Property(e => e.InterviewLocation).HasMaxLength(512);
-            entity.Property(e => e.InterviewTime).HasColumnType("time");
+            entity.Property(e => e.InterviewTime).HasColumnType("text");
             entity.Property(e => e.JobLocationId).HasColumnName("JobLocationID");
             entity.Property(e => e.OtherDetail).HasColumnType("text");
             entity.Property(e => e.Qualification).HasMaxLength(512);

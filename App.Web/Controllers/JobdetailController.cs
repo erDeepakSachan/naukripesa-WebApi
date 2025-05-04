@@ -26,7 +26,10 @@ namespace App.Web.Controllers
         {
             int offset = (WebHelper.DefaultGridPageSize * (pageNo));
             int limit = (offset + WebHelper.DefaultGridPageSize);
-            var data = await service.GetAll().Skip(offset).Take(limit).ToListAsync();
+            var data = await service.GetAll()
+                .Include(p=>p.Company)
+                .Include(p=>p.JobLocation)
+                .Skip(offset).Take(limit).ToListAsync();
             var count = await service.GetAll().CountAsync();
             var list = ToListingResponse(data, pageNo, count);
             return NeoData(list);

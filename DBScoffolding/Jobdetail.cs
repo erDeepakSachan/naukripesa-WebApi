@@ -13,7 +13,7 @@ public partial class Jobdetail
 
     public DateTime? InterviewDate { get; set; }
 
-    public TimeOnly? InterviewTime { get; set; }
+    public string? InterviewTime { get; set; }
 
     public string? InterviewLocation { get; set; }
 
