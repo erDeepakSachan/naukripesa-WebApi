@@ -25,7 +25,7 @@ public partial class Jobdetail
 
     public string? OtherDetail { get; set; }
 
-    public virtual Company Company { get; set; } = null!;
+    public virtual Company? Company { get; set; } = null!;
 
-    public virtual Joblocation JobLocation { get; set; } = null!;
+    public virtual Joblocation? JobLocation { get; set; } = null!;
 }
