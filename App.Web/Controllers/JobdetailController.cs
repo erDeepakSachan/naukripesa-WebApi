@@ -7,6 +7,7 @@ using App.Entity;
 using App.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace App.Web.Controllers
 {
@@ -20,6 +21,7 @@ namespace App.Web.Controllers
             this.service = service;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> List([FromQuery]int pageNo = 0)

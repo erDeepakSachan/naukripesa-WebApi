@@ -23,8 +23,17 @@ public class GenericService<T> : BaseService, IGenericService<T> where T : class
 
     public async Task<bool> Insert(T obj)
     {
-        await repository.Insert(obj);
-        return await repository.Commit();
+        try
+        {
+            await repository.Insert(obj);
+            return await repository.Commit();
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return false;
     }
 
     public async Task<bool> Update(T obj)

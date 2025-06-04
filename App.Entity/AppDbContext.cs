@@ -115,7 +115,7 @@ namespace App.Entity
 
                 entity.Property(e => e.CurrencyId).HasColumnName("CurrencyID");
 
-                entity.Property(e => e.Description)
+                entity.Property(e => e.Address)
                     .HasMaxLength(256)
                     .IsUnicode(false);
                 

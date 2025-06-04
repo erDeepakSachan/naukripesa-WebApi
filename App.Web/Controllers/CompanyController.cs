@@ -26,7 +26,9 @@ namespace App.Web.Controllers
         {
             int offset = WebHelper.DefaultGridPageSize * pageNo;
             int limit = WebHelper.DefaultGridPageSize;
-            var data = await service.GetAll().Skip(offset).Take(limit).ToListAsync();
+            var data = await service.GetAll()
+                .Include(p => p.Currency)
+                .Skip(offset).Take(limit).ToListAsync();
             var count = await service.GetAll().CountAsync();
             var list = ToListingResponse(data, pageNo, count);
             return NeoData(list);
@@ -50,15 +52,22 @@ namespace App.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Add([FromBody]Company obj)
         {
-            var success = await service.Insert(obj);
             var resp = new NeoApiResponse();
-            if (success)
+            try
             {
-                resp = resp.SuccessResponse(null, "Company has been created successfully.");
+                var success = await service.Insert(obj);
+                if (success)
+                {
+                    resp = resp.SuccessResponse(null, "Company has been created successfully.");
+                }
+                else
+                {
+                    resp = resp.ErrorResponse("Company create failed.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                resp = resp.ErrorResponse("Company create failed.");
+
             }
 
             return NeoData(resp);

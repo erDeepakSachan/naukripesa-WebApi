@@ -18,7 +18,7 @@ namespace App.Entity
 
         public string Name { get; set; } = null!;
 
-        public string Description { get; set; } = null!;
+        public string Address { get; set; } = null!;
 
         public int CreatedBy { get; set; }
 
@@ -26,9 +26,9 @@ namespace App.Entity
 
         public int ModifiedBy { get; set; }
 
-        public DateTime ModifiedOn { get; set; }
+        public DateTime? ModifiedOn { get; set; }
 
-        public virtual Currency Currency { get; set; } = null!;
+        public virtual Currency? Currency { get; set; } = null!;
 
         public virtual ICollection<Jobdetail> Jobdetails { get; set; } = new List<Jobdetail>();
 
