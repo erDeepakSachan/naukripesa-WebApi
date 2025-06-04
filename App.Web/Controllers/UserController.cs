@@ -63,6 +63,8 @@ namespace App.Web.Controllers
             obj.CreatedOn = DateTime.Now;
             obj.ModifiedOn = obj.CreatedOn;
             obj.ModifiedBy = User.UserId();
+            obj.Password = NeoAuthorization.cryptographyHelper.Encrypt(obj.Password,
+                            NeoContext.PassPhrase(NeoAuthorization));
             var success = await service.Insert(obj);
             var resp = new NeoApiResponse();
             if (success)
@@ -82,6 +84,7 @@ namespace App.Web.Controllers
         public async Task<IActionResult> Edit(Int32 id)
         {
             var obj = await service.Get(id);
+            obj.Password = NeoAuthorization.cryptographyHelper.Decrypt(obj.Password, NeoContext.PassPhrase(NeoAuthorization));
             return NeoData(obj);
         }
 
@@ -91,6 +94,8 @@ namespace App.Web.Controllers
         {
             obj.ModifiedOn = DateTime.Now;
             obj.ModifiedBy = User.UserId();
+            obj.Password = NeoAuthorization.cryptographyHelper.Encrypt(obj.Password,
+                            NeoContext.PassPhrase(NeoAuthorization));
             var success = await service.Update(obj);
             var resp = new NeoApiResponse();
             if (success)
