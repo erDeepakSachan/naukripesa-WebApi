@@ -53,11 +53,11 @@ namespace App.Web.Fx
             return false;
         }
 
-        public NeoAuthToken SignMeIn(LoginRequest req)
+        public NeoAuthToken SignMeIn(LoginRequest req, string passphrase)
         {
             cryptographyHelper.EncodingType = CryptographyHelper.EncodingBaseTypes.Hex;
 
-            var passphrase = webHelper.NeoPassPhrase;
+            //var passphrase = webHelper.NeoPassPhrase;
 
             var password = cryptographyHelper.Encrypt(req.Password, passphrase);
             var user = userService.Authenticate(req.UserName, password);

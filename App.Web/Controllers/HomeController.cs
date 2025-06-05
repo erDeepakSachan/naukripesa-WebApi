@@ -106,7 +106,8 @@ namespace App.Web.Controllers
         {
             try
             {
-                var resp = NeoAuthorization.SignMeIn(model);
+                var passphrase = NeoContext.PassPhrase(NeoAuthorization);
+                var resp = NeoAuthorization.SignMeIn(model, passphrase);
                 if (resp != null && resp.SID != Guid.Empty)
                 {
                     var encToken = resp.SetAuthCookie(NeoAuthorization);
