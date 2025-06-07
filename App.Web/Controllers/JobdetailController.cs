@@ -69,6 +69,7 @@ namespace App.Web.Controllers
             return NeoData(resp);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> Edit(Int32 id)
