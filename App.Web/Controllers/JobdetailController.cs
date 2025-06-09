@@ -74,7 +74,9 @@ namespace App.Web.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Edit(Int32 id)
         {
-            var obj = await service.Get(id);
+            var obj = await service.GetAll()
+                .Include(p => p.Company)
+                .Include(p => p.JobLocation).FirstOrDefaultAsync(p => p.JobDetailId == id); ;
             return NeoData(obj);
         }
 
