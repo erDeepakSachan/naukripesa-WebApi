@@ -26,15 +26,39 @@ namespace App.Web.Controllers
         [Route("")]
         public async Task<IActionResult> List([FromQuery]int pageNo = 0)
         {
-            int offset = (WebHelper.DefaultGridPageSize * (pageNo));
-            int limit = (offset + WebHelper.DefaultGridPageSize);
-            var data = await service.GetAll()
-                .Include(p=>p.Company)
-                .Include(p=>p.JobLocation)
-                .Skip(offset).Take(limit).ToListAsync();
-            var count = await service.GetAll().CountAsync();
-            var list = ToListingResponse(data, pageNo, count);
-            return NeoData(list);
+            try
+            {
+                int offset = (WebHelper.DefaultGridPageSize * (pageNo));
+                int limit = (offset + WebHelper.DefaultGridPageSize);
+                var data = await service.GetAll()
+                    .Include(p => p.Company)
+                    .Include(p => p.JobLocation)
+                    .OrderByDescending(p => p.InterviewDate)
+                    .Skip(offset).Take(limit).ToListAsync();
+                var count = await service.GetAll().CountAsync();
+                var list = ToListingResponse(data, pageNo, count);
+                return NeoData(list);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<IActionResult> ListWithoutPagination()
+        {
+            try
+            {
+                var data = await service.GetAll()
+                    .Include(p => p.Company)
+                    .Include(p => p.JobLocation)
+                    .OrderByDescending(p => p.InterviewDate).ToListAsync();
+                return NeoData(data);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         [HttpGet]
@@ -55,6 +79,7 @@ namespace App.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Add([FromBody]Jobdetail obj)
         {
+            obj.CreatedOn = DateTime.Now;
             var success = await service.Insert(obj);
             var resp = new NeoApiResponse();
             if (success)
@@ -84,6 +109,7 @@ namespace App.Web.Controllers
         [Route("")]
         public async Task<IActionResult> Edit(Jobdetail obj)
         {
+            obj.ModifiedOn = DateTime.Now;
             var success = await service.Update(obj);
             var resp = new NeoApiResponse();
             if (success)

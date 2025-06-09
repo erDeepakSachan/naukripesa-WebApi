@@ -570,6 +570,37 @@ namespace App.Entity
                 entity.Property(e => e.JobLocationId).HasColumnName("JobLocationID");
                 entity.Property(e => e.OtherDetail).HasColumnType("text");
                 entity.Property(e => e.Qualification).HasMaxLength(512);
+                entity.Property(e => e.CreatedBy).HasColumnName("CreatedBy");
+                entity.Property(e => e.ModifiedBy).HasColumnName("ModifiedBy");
+                if (provider == EfProviders.SqlServer)
+                {
+                    entity.Property(e => e.CreatedOn)
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+                }
+
+                if (provider == EfProviders.MySql)
+                {
+                    entity.Property(e => e.CreatedOn)
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("('1900-01-01')");
+                }
+
+                if (provider == EfProviders.PostgreSql)
+                {
+                    entity.Property(e => e.CreatedOn)
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("('1900-01-01')");
+                }
+
+                if (provider == EfProviders.PostgreSql)
+                {
+                    entity.Property(e => e.ModifiedOn).HasColumnType("timestamp with time zone");
+                }
+                else
+                {
+                    entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+                }
 
                 entity.HasOne(d => d.Company).WithMany(p => p.Jobdetails)
                     .HasForeignKey(d => d.CompanyId)
