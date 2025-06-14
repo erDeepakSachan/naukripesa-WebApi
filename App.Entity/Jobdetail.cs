@@ -25,6 +25,14 @@ public partial class Jobdetail
 
     public string? OtherDetail { get; set; }
 
+    public DateTime? CreatedOn { get; set; }
+
+    public int? CreatedBy { get; set; }
+
+    public DateTime? ModifiedOn { get; set; }
+
+    public int? ModifiedBy { get; set; }
+
     public virtual Company? Company { get; set; } = null!;
 
     public virtual Joblocation? JobLocation { get; set; } = null!;

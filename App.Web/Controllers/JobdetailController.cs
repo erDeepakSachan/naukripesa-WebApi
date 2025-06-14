@@ -24,17 +24,33 @@ namespace App.Web.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> List([FromQuery]int pageNo = 0)
+        public async Task<IActionResult> List([FromQuery]int pageNo = 0, [FromQuery] int pageSize = 0)
         {
-            int offset = (WebHelper.DefaultGridPageSize * (pageNo));
-            int limit = (offset + WebHelper.DefaultGridPageSize);
-            var data = await service.GetAll()
-                .Include(p=>p.Company)
-                .Include(p=>p.JobLocation)
-                .Skip(offset).Take(limit).ToListAsync();
-            var count = await service.GetAll().CountAsync();
-            var list = ToListingResponse(data, pageNo, count);
-            return NeoData(list);
+            try
+            {
+                int offset = (WebHelper.DefaultGridPageSize * (pageNo));
+                int limit = 0;
+                if (pageSize == 0)
+                {
+                    limit = (offset + WebHelper.DefaultGridPageSize);
+                }
+                else
+                {
+                    limit = pageSize;
+                }
+                    var data = await service.GetAll()
+                        .Include(p => p.Company)
+                        .Include(p => p.JobLocation)
+                        .OrderByDescending(p => p.InterviewDate)
+                        .Skip(offset).Take(limit).ToListAsync();
+                var count = await service.GetAll().CountAsync();
+                var list = ToListingResponse(data, pageNo, count);
+                return NeoData(list);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         [HttpGet]
