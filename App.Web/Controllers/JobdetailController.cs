@@ -24,7 +24,7 @@ namespace App.Web.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> List([FromQuery]int pageNo = 0, [FromQuery] int pageSize = 0)
+        public async Task<IActionResult> List([FromQuery] int pageNo = 0, [FromQuery] int pageSize = 0, [FromQuery] int cityId = 0)
         {
             try
             {
@@ -38,14 +38,28 @@ namespace App.Web.Controllers
                 {
                     limit = pageSize;
                 }
+                if (cityId != 0)
+                {
+                    var data = await service.GetAll()
+                        .Include(p => p.Company)
+                        .Include(p => p.JobLocation).Where(j => j.JobLocationId == cityId)
+                        .OrderByDescending(p => p.InterviewDate)
+                        .Skip(offset).Take(limit).ToListAsync();
+                    var count = await service.GetAll().CountAsync();
+                    var list = ToListingResponse(data, pageNo, count);
+                    return NeoData(list);
+                }
+                else
+                {
                     var data = await service.GetAll()
                         .Include(p => p.Company)
                         .Include(p => p.JobLocation)
                         .OrderByDescending(p => p.InterviewDate)
                         .Skip(offset).Take(limit).ToListAsync();
-                var count = await service.GetAll().CountAsync();
-                var list = ToListingResponse(data, pageNo, count);
-                return NeoData(list);
+                    var count = await service.GetAll().CountAsync();
+                    var list = ToListingResponse(data, pageNo, count);
+                    return NeoData(list);
+                }  
             }
             catch (Exception ex)
             {
@@ -55,21 +69,21 @@ namespace App.Web.Controllers
 
         [HttpGet]
         [Route("search")]
-        public async Task<IActionResult> Search([FromQuery]string q)
+        public async Task<IActionResult> Search([FromQuery] string q)
         {
             if (String.IsNullOrWhiteSpace(q))
             {
                 return await List(0);
             }
 
-            var data = await service.GetAll().Include(p=>p.JobLocation).Where(p => p.JobLocation.Location.Contains(q)).ToListAsync();
+            var data = await service.GetAll().Include(p => p.JobLocation).Where(p => p.JobLocation.Location.Contains(q)).ToListAsync();
             var list = ToListingResponse(data, 0, 10);
             return NeoData(list);
         }
 
         [Route("")]
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody]Jobdetail obj)
+        public async Task<IActionResult> Add([FromBody] Jobdetail obj)
         {
             var success = await service.Insert(obj);
             var resp = new NeoApiResponse();
@@ -132,5 +146,5 @@ namespace App.Web.Controllers
 
             return NeoData(resp);
         }
-   }
+    }
 }
