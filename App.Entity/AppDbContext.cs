@@ -556,12 +556,9 @@ namespace App.Entity
 
                 entity.ToTable("jobdetails");
 
-                entity.HasIndex(e => e.CompanyId, "FK_JobDetails_Company_idx");
-
                 entity.HasIndex(e => e.JobLocationId, "FK_JobDetails_JobLocation_idx");
 
                 entity.Property(e => e.JobDetailId).HasColumnName("JobDetailID");
-                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
                 entity.Property(e => e.ContactNumber).HasMaxLength(12);
                 entity.Property(e => e.Department).HasMaxLength(128);
                 entity.Property(e => e.InterviewDate).HasColumnType("datetime");
@@ -601,10 +598,6 @@ namespace App.Entity
                 {
                     entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
                 }
-                entity.HasOne(d => d.Company).WithMany(p => p.Jobdetails)
-                    .HasForeignKey(d => d.CompanyId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_JobDetails_Company");
             });
 
             modelBuilder.Entity<Joblocation>(entity =>

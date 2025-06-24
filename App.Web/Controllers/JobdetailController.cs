@@ -41,7 +41,6 @@ namespace App.Web.Controllers
                 if (cityId != 0)
                 {
                     var data = await service.GetAll()
-                        .Include(p => p.Company)
                         .Include(p => p.JobLocation).Where(j => j.JobLocationId == cityId)
                         .OrderByDescending(p => p.InterviewDate)
                         .Skip(offset).Take(limit).ToListAsync();
@@ -52,7 +51,6 @@ namespace App.Web.Controllers
                 else
                 {
                     var data = await service.GetAll()
-                        .Include(p => p.Company)
                         .Include(p => p.JobLocation)
                         .OrderByDescending(p => p.InterviewDate)
                         .Skip(offset).Take(limit).ToListAsync();
@@ -105,7 +103,6 @@ namespace App.Web.Controllers
         public async Task<IActionResult> Edit(Int32 id)
         {
             var obj = await service.GetAll()
-                .Include(p => p.Company)
                 .Include(p => p.JobLocation).FirstOrDefaultAsync(p => p.JobDetailId == id); ;
             return NeoData(obj);
         }

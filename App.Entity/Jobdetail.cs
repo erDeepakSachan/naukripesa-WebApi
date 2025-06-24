@@ -7,8 +7,6 @@ public partial class Jobdetail
 {
     public int JobDetailId { get; set; }
 
-    public int CompanyId { get; set; }
-
     public int JobLocationId { get; set; }
 
     public DateTime? InterviewDate { get; set; }
@@ -32,8 +30,6 @@ public partial class Jobdetail
     public DateTime? ModifiedOn { get; set; }
 
     public int? ModifiedBy { get; set; }
-
-    public virtual Company? Company { get; set; } = null!;
 
     public virtual Joblocation? JobLocation { get; set; } = null!;
 }
