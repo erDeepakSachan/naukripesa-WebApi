@@ -5,6 +5,7 @@ namespace App.Entity;
 
 public partial class Jobdetail
 {
+    public string? CompanyName { get; set; }
     public int JobDetailId { get; set; }
 
     public int JobLocationId { get; set; }

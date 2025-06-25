@@ -557,7 +557,7 @@ namespace App.Entity
                 entity.ToTable("jobdetails");
 
                 entity.HasIndex(e => e.JobLocationId, "FK_JobDetails_JobLocation_idx");
-
+                entity.Property(e => e.CompanyName).HasMaxLength(512);
                 entity.Property(e => e.JobDetailId).HasColumnName("JobDetailID");
                 entity.Property(e => e.ContactNumber).HasMaxLength(12);
                 entity.Property(e => e.Department).HasMaxLength(128);
