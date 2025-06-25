@@ -181,6 +181,19 @@ namespace App.Web.Fx
             return false;
         }
 
+        public NeoAuthToken GetLoggedInUser()
+        {
+            var context = this.sessionHelper.NeoContext;
+            var webPages = context.WebPages(this);
+            if (webPages == null)
+            {
+                webPages = new Dictionary<string, int>();
+            }
+
+            var authToken = ParseAuthToken(context.AuthTokenFromRqeuest);
+            return authToken;
+        }
+
         private void InitPublicPageList()
         {
             this.publicPages = new List<string>();

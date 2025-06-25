@@ -135,6 +135,13 @@ namespace App.Web.Fx
 
             return new NeoApiResponse().SuccessResponse(model);
         }
+
+        protected NeoAuthToken GetLoggedInUser()
+        {
+            var loggenInUser = HttpContext.RequestServices.GetService<NeoAuthorization>().GetLoggedInUser();
+            return loggenInUser;
+        }
+
     }
 
     public class NeoAuthorizeAttribute : AuthorizeAttribute, IAsyncAuthorizationFilter

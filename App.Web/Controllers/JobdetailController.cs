@@ -28,36 +28,31 @@ namespace App.Web.Controllers
         {
             try
             {
-                int offset = (WebHelper.DefaultGridPageSize * (pageNo));
-                int limit = 0;
-                if (pageSize == 0)
-                {
-                    limit = (offset + WebHelper.DefaultGridPageSize);
-                }
-                else
-                {
-                    limit = pageSize;
-                }
+                var loggedInUser = GetLoggedInUser();
+                int offset = WebHelper.DefaultGridPageSize * pageNo;
+                int limit = (pageSize == 0) ? offset + WebHelper.DefaultGridPageSize : pageSize;
+
+                IQueryable<Jobdetail> query = service.GetAll().Include(p => p.JobLocation);
+
                 if (cityId != 0)
                 {
-                    var data = await service.GetAll()
-                        .Include(p => p.JobLocation).Where(j => j.JobLocationId == cityId)
-                        .OrderByDescending(p => p.InterviewDate)
-                        .Skip(offset).Take(limit).ToListAsync();
-                    var count = await service.GetAll().CountAsync();
-                    var list = ToListingResponse(data, pageNo, count);
-                    return NeoData(list);
+                    query = query.Where(j => j.JobLocationId == cityId);
                 }
-                else
+                else if (loggedInUser != null && loggedInUser.GroupID != 1)
                 {
-                    var data = await service.GetAll()
-                        .Include(p => p.JobLocation)
-                        .OrderByDescending(p => p.InterviewDate)
-                        .Skip(offset).Take(limit).ToListAsync();
-                    var count = await service.GetAll().CountAsync();
-                    var list = ToListingResponse(data, pageNo, count);
-                    return NeoData(list);
-                }  
+                    query = query.Where(x => x.CreatedBy == loggedInUser.UserID);
+                }
+
+                var data = await query
+                    .OrderByDescending(p => p.InterviewDate)
+                    .Skip(offset)
+                    .Take(limit)
+                    .ToListAsync();
+
+                var count = await service.GetAll().CountAsync(); // Optional: consider optimizing this
+
+                var list = ToListingResponse(data, pageNo, count);
+                return NeoData(list);
             }
             catch (Exception ex)
             {
@@ -83,6 +78,9 @@ namespace App.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] Jobdetail obj)
         {
+            var loggedInUser = GetLoggedInUser();
+            obj.CreatedBy = loggedInUser.UserID;
+            obj.CreatedOn = DateTime.Now;
             var success = await service.Insert(obj);
             var resp = new NeoApiResponse();
             if (success)
@@ -111,6 +109,9 @@ namespace App.Web.Controllers
         [Route("")]
         public async Task<IActionResult> Edit(Jobdetail obj)
         {
+            var loggedInUser = GetLoggedInUser();
+            obj.ModifiedBy = loggedInUser.UserID;
+            obj.ModifiedOn = DateTime.Now;
             var success = await service.Update(obj);
             var resp = new NeoApiResponse();
             if (success)
