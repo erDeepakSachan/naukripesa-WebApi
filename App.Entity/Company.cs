@@ -9,7 +9,6 @@ namespace App.Entity
         {
             Settings = new HashSet<Setting>();
             Users = new HashSet<User>();
-            Jobdetails = new HashSet<Jobdetail>();
         }
 
         public int CompanyId { get; set; }
@@ -29,8 +28,6 @@ namespace App.Entity
         public DateTime? ModifiedOn { get; set; }
 
         public virtual Currency? Currency { get; set; } = null!;
-
-        public virtual ICollection<Jobdetail> Jobdetails { get; set; } = new List<Jobdetail>();
 
         public virtual ICollection<Setting> Settings { get; set; } = new List<Setting>();
 
