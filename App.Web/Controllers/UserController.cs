@@ -1,13 +1,14 @@
+using App.Entity;
+using App.Service;
 using App.Web.Fx;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Writers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using App.Entity;
-using App.Service;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Writers;
 
 namespace App.Web.Controllers
 {
@@ -57,8 +58,19 @@ namespace App.Web.Controllers
 
         [Route("")]
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Add([FromBody]User obj)
         {
+            var data = await service.GetAll().OrderByDescending(y => y.UserId).FirstOrDefaultAsync();
+            var prefix = "CUN-" + DateTime.Now.ToString("yyMMdd") + "-";
+            if (data != null)
+            {
+                obj.Code = prefix + data.UserId;
+            }
+            else
+            {
+                obj.Code = prefix + 1;
+            }
             obj.CreatedBy = User.UserId();
             obj.CreatedOn = DateTime.Now;
             obj.ModifiedOn = obj.CreatedOn;
