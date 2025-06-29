@@ -98,6 +98,7 @@ namespace App.Web.Controllers
 
         [HttpPut]
         [Route("ValidateOTP")]
+        [AllowAnonymous]
         public async Task<IActionResult> ValidateOTP(User obj)
         {
             var data = await service.GetAll().Where(e=>e.Email == obj.Email).FirstOrDefaultAsync();
@@ -105,6 +106,7 @@ namespace App.Web.Controllers
             if (data?.Otp == obj.Otp && data != null)
             {
                 data.IsArchived = true;
+                data.Password = obj.Password;
                 var isSuccess = await UpdateUserAsync(data);
                 resp = isSuccess
                     ? resp.SuccessResponse(null, "Registration completed successfully.")
