@@ -56,6 +56,98 @@ namespace App.Web.Controllers
             return NeoData(list);
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("GenerateOTP")]
+        public async Task<IActionResult> GenerateOtpAsync([FromBody] User obj)
+        {
+            var resp = new NeoApiResponse();
+
+            try
+            {
+                var data = await service.GetAll().Where(e => e.Email == obj.Email).FirstOrDefaultAsync();
+                if (data != null)
+                {
+                    resp = resp.SuccessResponse(null, "Entered Email is already exist in our system.");
+                    return NeoData(resp);
+                }
+                var result = Util.Util.GenerateOTPAndSendMail(obj.Email);
+
+                if (result.isSucess)
+                {
+                    obj.Otp = result.otp;
+                    obj.IsArchived = false;
+                    var isUserCreated = await CreateInactiveUser(obj);
+                    if (isUserCreated)
+                    {
+                        resp = resp.SuccessResponse(null, "OTP has been sent to your email address.");
+                    }
+                }
+                else
+                {
+                    resp = resp.ErrorResponse("Something went wrong");
+                }
+            }
+            catch (Exception ex)
+            {
+                resp = resp.ErrorResponse("Server error occurred while sending OTP.");
+            }
+
+            return NeoData(resp);
+        }
+
+        [HttpPut]
+        [Route("ValidateOTP")]
+        public async Task<IActionResult> ValidateOTP(User obj)
+        {
+            var data = await service.GetAll().Where(e=>e.Email == obj.Email).FirstOrDefaultAsync();
+            var resp = new NeoApiResponse();
+            if (data?.Otp == obj.Otp && data != null)
+            {
+                data.IsArchived = true;
+                var isSuccess = await UpdateUserAsync(data);
+                resp = isSuccess
+                    ? resp.SuccessResponse(null, "Registration completed successfully.")
+                    : resp.ErrorResponse("Registration got failed, Please connect to admin.");
+            }
+            else
+            {
+                resp = resp.ErrorResponse("OTP is not correct");
+            }
+            return NeoData(resp);
+        }
+
+        private async Task<bool> UpdateUserAsync(User obj)
+        {
+            var resp = false;
+            try
+            {
+                // Update audit fields
+                obj.ModifiedOn = DateTime.Now;
+                obj.ModifiedBy = User.UserId();
+
+                // Encrypt password
+                obj.Password = NeoAuthorization.cryptographyHelper.Encrypt(
+                    obj.Password,
+                    NeoContext.PassPhrase(NeoAuthorization)
+                );
+
+                // Update in DB
+                resp = await service.Update(obj);
+                    //? resp.SuccessResponse(null, "User has been updated successfully.")
+                    //: resp.ErrorResponse("User update failed.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Update failed: " + ex.Message);
+                //resp = resp.ErrorResponse("An unexpected error occurred.");
+            }
+
+            return resp;
+        }
+        // $45 Add user logic is already written in a private method "CreateInactiveUser". use that method.
+        // Now that method is being used to create user from public website and below method is being used from admin panel.
+        // most of the logic is same.
         [Route("")]
         [HttpPost]
         [AllowAnonymous]
@@ -91,6 +183,48 @@ namespace App.Web.Controllers
             return NeoData(resp);
         }
 
+
+        private async Task<bool> CreateInactiveUser(User obj)
+        {
+            var isSuccess = false;
+
+            try
+            {
+                // Generate code prefix
+                var prefix = "CUN-" + DateTime.Now.ToString("yyMMdd") + "-";
+                var data = await service.GetAll()
+                                        .OrderByDescending(y => y.UserId)
+                                        .FirstOrDefaultAsync();
+
+                obj.Code = data != null ? prefix + data.UserId : prefix + "1";
+
+                // Set audit fields
+                var userId = User.UserId();
+                var now = DateTime.Now;
+
+                obj.CreatedBy = userId;
+                obj.CreatedOn = now;
+                obj.ModifiedBy = userId;
+                obj.ModifiedOn = now;
+
+                // Encrypt password
+                obj.Password = NeoAuthorization.cryptographyHelper.Encrypt(
+                    obj.Password,
+                    NeoContext.PassPhrase(NeoAuthorization)
+                );
+
+                // Insert the user
+                isSuccess = await service.Insert(obj);
+            }
+            catch (Exception ex)
+            {
+                isSuccess = false;
+            }
+
+            return isSuccess;
+        }
+
+
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> Edit(Int32 id)
@@ -104,21 +238,11 @@ namespace App.Web.Controllers
         [Route("")]
         public async Task<IActionResult> Edit(User obj)
         {
-            obj.ModifiedOn = DateTime.Now;
-            obj.ModifiedBy = User.UserId();
-            obj.Password = NeoAuthorization.cryptographyHelper.Encrypt(obj.Password,
-                            NeoContext.PassPhrase(NeoAuthorization));
-            var success = await service.Update(obj);
             var resp = new NeoApiResponse();
-            if (success)
-            {
-                resp = resp.SuccessResponse(null, "User has been updated successfully.");
-            }
-            else
-            {
-                resp = resp.ErrorResponse("User update failed.");
-            }
-
+            var isSuccess = await UpdateUserAsync(obj);
+            resp = isSuccess
+            ? resp.SuccessResponse(null, "User has been updated successfully.")
+            : resp.ErrorResponse("User update failed.");
             return NeoData(resp);
         }
 

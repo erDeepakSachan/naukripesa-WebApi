@@ -16,6 +16,6 @@ public class UserService : GenericService<User>
 
     public User? Authenticate(string email, string password)
     {
-        return GetAll().FirstOrDefault(p => p.Email == email && p.Password == password && p.IsArchived == false);
+        return GetAll().FirstOrDefault(p => p.Email == email && p.Password == password && p.IsArchived == true);
     }
 }
