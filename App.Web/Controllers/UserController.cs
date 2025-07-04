@@ -65,30 +65,41 @@ namespace App.Web.Controllers
 
             try
             {
-                var data = await service.GetAll().Where(e => e.Email == obj.Email).FirstOrDefaultAsync();
-                if (data != null)
+                var data = await service.GetAll()
+                    .Where(e => e.Email == obj.Email)
+                    .FirstOrDefaultAsync();
+
+                if (data?.IsArchived == true)
                 {
-                    resp = resp.SuccessResponse(null, "Entered Email is already exist in our system.");
+                    resp = resp.SuccessResponse(null, "Entered Email is already exist in our system.", isSuccess: false);
                     return NeoData(resp);
                 }
+
                 var result = Util.Util.GenerateOTPAndSendMail(obj.Email);
 
-                if (result.isSucess)
-                {
-                    obj.Otp = result.otp;
-                    obj.IsArchived = false;
-                    var isUserCreated = await CreateInactiveUser(obj);
-                    if (isUserCreated)
-                    {
-                        resp = resp.SuccessResponse(null, "OTP has been sent to your email address.");
-                    }
-                }
-                else
+                if (!result.isSucess)
                 {
                     resp = resp.ErrorResponse("Something went wrong");
+                    return NeoData(resp);
                 }
+
+                obj.Otp = result.otp;
+                obj.IsArchived = false;
+                var isDataSavedInDB = false;
+                if (data?.IsArchived == false)
+                {
+                    data.Otp = result.otp;
+                    isDataSavedInDB = await UpdateUserAsync(data);
+                }else
+                {
+                    isDataSavedInDB = await CreateInactiveUser(obj);
+                }
+
+                resp = isDataSavedInDB
+                    ? resp.SuccessResponse(null, "OTP has been sent to your email address.")
+                    : resp.ErrorResponse("Failed to save OTP in database.");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 resp = resp.ErrorResponse("Server error occurred while sending OTP.");
             }

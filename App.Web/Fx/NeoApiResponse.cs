@@ -17,10 +17,10 @@ namespace App.Web.Fx
         public object Data { get; set; }
         public object Errors { get; set; }
 
-        public NeoApiResponse SuccessResponse(object data, string message = "Success", int status = (int)HttpStatusCode.OK)
+        public NeoApiResponse SuccessResponse(object data, string message = "Success", int status = (int)HttpStatusCode.OK, bool isSuccess = true)
         {
             this.Data = data;
-            this.IsSuccess = true;
+            this.IsSuccess = isSuccess;
             this.Message = message;
             this.Errors = null;
             this.Status = status;
