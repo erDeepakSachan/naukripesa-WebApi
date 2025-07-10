@@ -15,6 +15,18 @@ builder.WebHost
         p.AddEnvironmentVariables();
     })
     .ConfigureKestrel(p=>p.AllowSynchronousIO = true);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowNaukriPesa", builder =>
+    {
+        builder.WithOrigins("https://www.naukripesa.com")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+        // .AllowCredentials(); // Uncomment if using cookies/auth
+    });
+});
+
 // Add services to the container.
 WebHelper appConfig = builder.Configuration.GetSection(WebHelper.APP_SETTINGS_SECTION).Get<WebHelper>();
 builder.Services.AddSingleton(appConfig);
@@ -78,6 +90,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseCors("AllowNaukriPesa");
 
 app.UseCors(p =>
 {
