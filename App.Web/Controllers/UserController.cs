@@ -125,7 +125,7 @@ namespace App.Web.Controllers
             }
             else
             {
-                resp = resp.ErrorResponse("OTP is not correct");
+                resp = resp.SuccessResponse(null, "OTP is not correct", isSuccess: false);
             }
             return NeoData(resp);
         }

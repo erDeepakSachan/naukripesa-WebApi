@@ -14,18 +14,18 @@ builder.WebHost
         p.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
         p.AddEnvironmentVariables();
     })
-    .ConfigureKestrel(p=>p.AllowSynchronousIO = true);
+    .ConfigureKestrel(p => p.AllowSynchronousIO = true);
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowNaukriPesa", builder =>
-    {
-        builder.WithOrigins("https://www.naukripesa.com")
-               .AllowAnyHeader()
-               .AllowAnyMethod();
-        // .AllowCredentials(); // Uncomment if using cookies/auth
-    });
-});
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowNaukriPesa", builder =>
+//    {
+//        builder.WithOrigins("https://www.naukripesa.com")
+//               .AllowAnyHeader()
+//               .AllowAnyMethod();
+//        // .AllowCredentials(); // Uncomment if using cookies/auth
+//    });
+//});
 
 // Add services to the container.
 WebHelper appConfig = builder.Configuration.GetSection(WebHelper.APP_SETTINGS_SECTION).Get<WebHelper>();
@@ -68,16 +68,26 @@ builder.Services.AddScoped<NeoAuthorization>();
 builder.Services.Configure<WebHelper>(builder.Configuration.GetSection(WebHelper.APP_SETTINGS_SECTION));
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(o=>NeoAuthorization.JwtOptions(o, builder.Configuration));
+    .AddJwtBearer(o => NeoAuthorization.JwtOptions(o, builder.Configuration));
 builder.Services.AddAuthorization();
 
 builder.Services.AddDbContext<AppDbContext>(_ =>
 {
     var connectionString = appConfig.AppConnectionString;
-    _.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString),b=>b.MigrationsAssembly(typeof(Program).Assembly.FullName));
+    _.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), b => b.MigrationsAssembly(typeof(Program).Assembly.FullName));
     // _.UseNpgsql(connectionString,b=>b.MigrationsAssembly(typeof(Program).Assembly.FullName));
 });
-builder.Services.AddCors();
+//builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 
 LoadServiceRegistrars(builder);
 
@@ -91,19 +101,19 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseCors("AllowNaukriPesa");
+//app.UseCors(p =>
+//{
+//    p.AllowAnyHeader();
+//    p.AllowAnyMethod();
+//    p.AllowAnyOrigin();
+//});
 
-app.UseCors(p =>
-{
-    p.AllowAnyHeader();
-    p.AllowAnyMethod();
-    p.AllowAnyOrigin();
-});
 app.UseStaticFiles();
 
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseRouting();
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -121,14 +131,14 @@ void LoadServiceRegistrars(WebApplicationBuilder webApplicationBuilder)
         .Select(Assembly.LoadFrom)
         .Where(p => p.GetName().Name.StartsWith("App.")).ToArray();
 
-// Get all implementations of IServiceRegistrar dynamically
+    // Get all implementations of IServiceRegistrar dynamically
     var registrars = assemblies
         .SelectMany(a => a.GetTypes())
         .Where(t => typeof(IServiceRegistrar).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
         .Select(Activator.CreateInstance)
         .Cast<IServiceRegistrar>();
 
-// Call RegisterServices() on each found class
+    // Call RegisterServices() on each found class
     foreach (var registrar in registrars)
     {
         registrar.RegisterServices(webApplicationBuilder.Services);
