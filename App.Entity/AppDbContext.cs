@@ -354,11 +354,11 @@ namespace App.Entity
 
                 if (provider == EfProviders.PostgreSql)
                 {
-                    entity.Property(e => e.IsArchived).HasDefaultValueSql("(('TRUE'))");
+                    entity.Property(e => e.IsActive).HasDefaultValueSql("(('TRUE'))");
                 }
                 else
                 {
-                    entity.Property(e => e.IsArchived).HasDefaultValueSql("((0))");
+                    entity.Property(e => e.IsActive).HasDefaultValueSql("((0))");
                 }
 
                 entity.Property(e => e.MobileNo).HasMaxLength(14);

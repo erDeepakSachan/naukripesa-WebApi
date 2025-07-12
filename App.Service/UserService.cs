@@ -11,11 +11,11 @@ public class UserService : GenericService<User>
 
     public User GetUserByEmailAndMobile(string email, string mobile)
     {
-        return GetAll().FirstOrDefault(p => p.Email == email && p.MobileNo == mobile && p.IsArchived == false);
+        return GetAll().FirstOrDefault(p => p.Email == email && p.MobileNo == mobile && p.IsActive == false);
     }
 
     public User? Authenticate(string email, string password)
     {
-        return GetAll().FirstOrDefault(p => p.Email == email && p.Password == password && p.IsArchived == true);
+        return GetAll().FirstOrDefault(p => p.Email == email && p.Password == password && p.IsActive == true);
     }
 }

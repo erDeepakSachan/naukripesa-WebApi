@@ -69,7 +69,7 @@ namespace App.Web.Controllers
                     .Where(e => e.Email == obj.Email)
                     .FirstOrDefaultAsync();
 
-                if (data?.IsArchived == true)
+                if (data?.IsActive == true)
                 {
                     resp = resp.SuccessResponse(null, "Entered Email is already exist in our system.", isSuccess: false);
                     return NeoData(resp);
@@ -84,9 +84,9 @@ namespace App.Web.Controllers
                 }
 
                 obj.Otp = result.otp;
-                obj.IsArchived = false;
+                obj.IsActive = false;
                 var isDataSavedInDB = false;
-                if (data?.IsArchived == false)
+                if (data?.IsActive == false)
                 {
                     data.Otp = result.otp;
                     isDataSavedInDB = await UpdateUserAsync(data);
@@ -116,7 +116,7 @@ namespace App.Web.Controllers
             var resp = new NeoApiResponse();
             if (data?.Otp == obj.Otp && data != null)
             {
-                data.IsArchived = true;
+                data.IsActive = true;
                 data.Password = obj.Password;
                 var isSuccess = await UpdateUserAsync(data);
                 resp = isSuccess
