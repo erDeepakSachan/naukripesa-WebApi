@@ -58,6 +58,43 @@ namespace App.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [Route("UpdatePassword")]
+        public async Task<IActionResult> UpdatePassword(string email, string mobile, string otp, string newPassword)
+        {
+            var resp = new NeoApiResponse();
+            try
+            {
+                var data = await service.GetAll()
+                    .Where(e => e.Email == email)
+                    .FirstOrDefaultAsync();
+                var isPasswordUpdated = false;
+                if (data?.IsActive == true && data.Otp == otp)
+                {
+                    data.Password = newPassword;
+                    isPasswordUpdated = await UpdateUserAsync(data);
+                    if (isPasswordUpdated)
+                    {
+                        resp = resp.SuccessResponse(null, "Password updated successfully.", isSuccess: true);
+                    }
+                    else
+                    {
+                        resp = resp.SuccessResponse(null, "Password updated successfully.", isSuccess: false);
+                    }
+                }
+                else
+                {
+                    resp = resp.SuccessResponse(null, "Wrong OTP entered.", isSuccess: false);
+                }
+            }
+            catch (Exception)
+            {
+                resp = resp.ErrorResponse("Something went wrong.");
+            }
+            return NeoData(resp);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
         [Route("GenerateOTP")]
         public async Task<IActionResult> GenerateOtpAsync([FromBody] User obj)
         {
@@ -69,7 +106,7 @@ namespace App.Web.Controllers
                     .Where(e => e.Email == obj.Email)
                     .FirstOrDefaultAsync();
 
-                if (data?.IsActive == true)
+                if (data?.IsActive == true && !string.IsNullOrWhiteSpace(obj.Name) && !string.IsNullOrWhiteSpace(obj.Password))
                 {
                     resp = resp.SuccessResponse(null, "Entered Email is already exist in our system.", isSuccess: false);
                     return NeoData(resp);
@@ -86,11 +123,16 @@ namespace App.Web.Controllers
                 obj.Otp = result.otp;
                 obj.IsActive = false;
                 var isDataSavedInDB = false;
-                if (data?.IsActive == false)
+                if (data?.IsActive == false || (string.IsNullOrWhiteSpace(obj.Name) && string.IsNullOrWhiteSpace(obj.Password)))
                 {
                     data.Otp = result.otp;
+                    if (string.IsNullOrWhiteSpace(obj.Password))
+                    {
+                        data.Password = NeoAuthorization.cryptographyHelper.Decrypt(data.Password, NeoContext.PassPhrase(NeoAuthorization));
+                    }
                     isDataSavedInDB = await UpdateUserAsync(data);
-                }else
+                }
+                else
                 {
                     isDataSavedInDB = await CreateInactiveUser(obj);
                 }
@@ -112,7 +154,7 @@ namespace App.Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ValidateOTP(User obj)
         {
-            var data = await service.GetAll().Where(e=>e.Email == obj.Email).FirstOrDefaultAsync();
+            var data = await service.GetAll().Where(e => e.Email == obj.Email).FirstOrDefaultAsync();
             var resp = new NeoApiResponse();
             if (data?.Otp == obj.Otp && data != null)
             {
@@ -147,8 +189,8 @@ namespace App.Web.Controllers
 
                 // Update in DB
                 resp = await service.Update(obj);
-                    //? resp.SuccessResponse(null, "User has been updated successfully.")
-                    //: resp.ErrorResponse("User update failed.");
+                //? resp.SuccessResponse(null, "User has been updated successfully.")
+                //: resp.ErrorResponse("User update failed.");
             }
             catch (Exception ex)
             {
@@ -164,7 +206,7 @@ namespace App.Web.Controllers
         [Route("")]
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Add([FromBody]User obj)
+        public async Task<IActionResult> Add([FromBody] User obj)
         {
             var data = await service.GetAll().OrderByDescending(y => y.UserId).FirstOrDefaultAsync();
             var prefix = "CUN-" + DateTime.Now.ToString("yyMMdd") + "-";
@@ -277,5 +319,5 @@ namespace App.Web.Controllers
 
             return NeoData(resp);
         }
-   }
+    }
 }
