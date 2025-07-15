@@ -32,6 +32,7 @@ namespace App.Entity
         public virtual DbSet<Webpage> Webpages { get; set; } = null!;
         public virtual DbSet<Jobdetail> Jobdetails { get; set; }
         public virtual DbSet<Joblocation> Joblocations { get; set; }
+        public virtual DbSet<contactus> contactsus { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -610,6 +611,19 @@ namespace App.Entity
                 entity.Property(e => e.CreatedOn).HasColumnType("datetime");
                 entity.Property(e => e.Location).HasMaxLength(100);
                 entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<contactus>(entity =>
+            {
+                entity.HasKey(e => e.ID).HasName("PRIMARY");
+
+                entity.ToTable("contactus");
+
+                entity.Property(e => e.ID).HasColumnName("ID");
+                entity.Property(e => e.Name).HasMaxLength(45);
+                entity.Property(e => e.PhoneNo).HasMaxLength(15);
+                entity.Property(e => e.Email).HasMaxLength(45);
+                entity.Property(e => e.Message).HasMaxLength(512);
             });
 
             modelBuilder.Entity<Webpage>(entity =>
