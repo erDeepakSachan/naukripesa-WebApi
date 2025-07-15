@@ -624,6 +624,14 @@ namespace App.Entity
                 entity.Property(e => e.PhoneNo).HasMaxLength(15);
                 entity.Property(e => e.Email).HasMaxLength(45);
                 entity.Property(e => e.Message).HasMaxLength(512);
+                if (provider == EfProviders.PostgreSql)
+                {
+                    entity.Property(e => e.IsReplied).HasDefaultValueSql("(('TRUE'))");
+                }
+                else
+                {
+                    entity.Property(e => e.IsReplied).HasDefaultValueSql("((0))");
+                }
             });
 
             modelBuilder.Entity<Webpage>(entity =>
