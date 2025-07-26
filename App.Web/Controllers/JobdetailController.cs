@@ -32,11 +32,15 @@ namespace App.Web.Controllers
                 int offset = WebHelper.DefaultGridPageSize * pageNo;
                 int limit = (pageSize == 0) ? offset + WebHelper.DefaultGridPageSize : pageSize;
 
-                IQueryable<Jobdetail> query = service.GetAll().Where(x=>x.IsITJob == isITJOb).Include(p => p.JobLocation);
+                IQueryable<Jobdetail> query = service.GetAll().Include(p => p.JobLocation);
 
                 if (cityId != 0)
                 {
                     query = query.Where(j => j.JobLocationId == cityId);
+                }
+                if (isITJOb)
+                {
+                    query = query.Where(j => j.IsITJob == isITJOb);
                 }
                 else if (loggedInUser != null && loggedInUser.GroupID != 1)
                 {
