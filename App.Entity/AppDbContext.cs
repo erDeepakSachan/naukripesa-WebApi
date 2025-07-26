@@ -599,6 +599,15 @@ namespace App.Entity
                 {
                     entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
                 }
+
+                if (provider == EfProviders.PostgreSql)
+                {
+                    entity.Property(e => e.IsITJob).HasDefaultValueSql("(('TRUE'))");
+                }
+                else
+                {
+                    entity.Property(e => e.IsITJob).HasDefaultValueSql("((0))");
+                }
             });
 
             modelBuilder.Entity<Joblocation>(entity =>

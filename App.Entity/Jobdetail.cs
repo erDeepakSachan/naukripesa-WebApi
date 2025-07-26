@@ -33,4 +33,5 @@ public partial class Jobdetail
     public int? ModifiedBy { get; set; }
 
     public virtual Joblocation? JobLocation { get; set; } = null!;
+    public bool IsITJob { get; set; }
 }
