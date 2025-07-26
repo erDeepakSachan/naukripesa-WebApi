@@ -24,7 +24,7 @@ namespace App.Web.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> List([FromQuery] int pageNo = 0, [FromQuery] int pageSize = 0, [FromQuery] int cityId = 0)
+        public async Task<IActionResult> List([FromQuery] int pageNo = 0, [FromQuery] int pageSize = 0, [FromQuery] int cityId = 0, bool isITJOb = false)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace App.Web.Controllers
                 int offset = WebHelper.DefaultGridPageSize * pageNo;
                 int limit = (pageSize == 0) ? offset + WebHelper.DefaultGridPageSize : pageSize;
 
-                IQueryable<Jobdetail> query = service.GetAll().Include(p => p.JobLocation);
+                IQueryable<Jobdetail> query = service.GetAll().Where(x=>x.IsITJob == isITJOb).Include(p => p.JobLocation);
 
                 if (cityId != 0)
                 {
