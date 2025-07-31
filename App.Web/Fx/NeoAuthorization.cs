@@ -210,6 +210,7 @@ namespace App.Web.Fx
             {
                 new Claim(ClaimTypes.Sid, authToken.UserID.ToString()),
                 new Claim(JwtRegisteredClaimNames.Sub, authToken.UserID.ToString()),
+                new Claim(JwtRegisteredClaimNames.FamilyName, authToken.GroupID.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Name, authToken.DisplayName),
                 new Claim(NeoAuthToken.AuthTokenKey, oldTokenData),
