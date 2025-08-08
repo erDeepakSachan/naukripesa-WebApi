@@ -14,15 +14,15 @@ namespace App.Util
         {
             try
             {
-                var fromAddress = new MailAddress("deepaksachandotcom@gmail.com", "Naukri-Pesa");
+                var fromAddress = new MailAddress("support@naukripesa.com", "Naukri-Pesa");
                 var toAddress = new MailAddress(tomail);
-                const string fromPassword = "dyhx xpnp qtej ibsm";
+                const string fromPassword = "Deepak@123";
                 const string subject = "Registration OTP";
                 var otp = GetOTP().ToString();
 
                 var smtp = new SmtpClient
                 {
-                    Host = "smtp.gmail.com",
+                    Host = "smtpout.secureserver.net",
                     Port = 587, // TLS Port
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
