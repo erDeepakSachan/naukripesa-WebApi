@@ -1,5 +1,6 @@
 using App.Entity;
 using App.Service;
+using App.Util;
 using App.Web.Fx;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -112,7 +113,7 @@ namespace App.Web.Controllers
                     return NeoData(resp);
                 }
 
-                var result = Util.Util.GenerateOTPAndSendMail(obj.Email);
+                var result = Utility.GenerateOTPAndSendMail(obj.Email);
 
                 if (!result.isSucess)
                 {

@@ -4,21 +4,20 @@ using App.Web.Fx;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using App.Util;
 
 namespace App.Web.Controllers
 {
     public class contactusController : NeoController
     {
         private readonly contactusService service;
+        private readonly CommonService commonService;
 
-        public contactusController(contactusService service, WebHelper webHelper, WebHelper.SessionHelper sessionHelper) :
+        public contactusController(contactusService service, WebHelper webHelper, WebHelper.SessionHelper sessionHelper, CommonService commonService) :
             base(webHelper, sessionHelper)
         {
             this.service = service;
+            this.commonService = commonService;
         }
 
         [HttpGet]
@@ -56,6 +55,15 @@ namespace App.Web.Controllers
             var resp = new NeoApiResponse();
             if (success)
             {
+                try
+                {
+                    var toEmail = commonService.GetSettingValueFromDb("EnquiryReceiverMail");
+                    var emailSend = Utility.SendMail(toEmail, "Enquiry From ContactUs Page", obj.Message);
+                }
+                catch (Exception)
+                {
+
+                }
                 resp = resp.SuccessResponse(null, "Thanks to contact us, we will get back to you soon.", isSuccess: true);
             }
             else
