@@ -73,7 +73,7 @@ namespace App.Web.Controllers
                 return await List(0);
             }
 
-            var data = await service.GetAll().Include(p => p.JobLocation).Where(p => p.JobLocation.Location.Contains(q)).ToListAsync();
+            var data = await service.GetAll().Include(p => p.JobLocation).Where(p => p.CompanyName.Contains(q)).ToListAsync();
             var list = ToListingResponse(data, 0, 10);
             return NeoData(list);
         }
