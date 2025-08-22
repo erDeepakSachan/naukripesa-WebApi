@@ -34,7 +34,13 @@ namespace App.Web.Controllers
 
                 IQueryable<Jobdetail> query = service.GetAll().Include(p => p.JobLocation);
 
-                if (cityId != 0)
+                if (cityId == -1)
+                {
+                    var excludedLocationIds = new[] { 1, 2, 3, 4 };
+                    query = query.Where(j => !excludedLocationIds.Contains(j.JobLocationId));
+
+                }
+                else if (cityId != 0)
                 {
                     query = query.Where(j => j.JobLocationId == cityId);
                 }
