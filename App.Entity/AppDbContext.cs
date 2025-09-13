@@ -561,6 +561,7 @@ namespace App.Entity
                 entity.Property(e => e.CompanyName).HasMaxLength(512);
                 entity.Property(e => e.JobDetailId).HasColumnName("JobDetailID");
                 entity.Property(e => e.ContactNumber).HasMaxLength(12);
+                entity.Property(e => e.Email).HasMaxLength(45);
                 entity.Property(e => e.Department).HasMaxLength(128);
                 entity.Property(e => e.InterviewDate).HasColumnType("datetime");
                 entity.Property(e => e.InterviewLocation).HasMaxLength(512);

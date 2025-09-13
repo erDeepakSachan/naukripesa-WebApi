@@ -19,6 +19,7 @@ public partial class Jobdetail
     public string? Qualification { get; set; }
 
     public string? ContactNumber { get; set; }
+    public string? Email { get; set; }
 
     public string? Department { get; set; }
 

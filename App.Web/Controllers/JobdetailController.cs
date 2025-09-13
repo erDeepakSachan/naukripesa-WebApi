@@ -21,16 +21,49 @@ namespace App.Web.Controllers
             this.service = service;
         }
 
-        [AllowAnonymous]
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> List([FromQuery] int pageNo = 0, [FromQuery] int pageSize = 0, [FromQuery] int cityId = 0, bool isITJOb = false)
+        public async Task<IActionResult> List([FromQuery] int pageNo = 0)
+        {
+            int offset = WebHelper.DefaultGridPageSize * pageNo;
+            int limit = WebHelper.DefaultGridPageSize;
+            DateTime now = DateTime.Now;
+            DateTime fifteenDaysAgo = now.AddDays(-15);
+
+            var query = service.GetAll()
+                .Include(p => p.JobLocation)
+                .AsEnumerable() // Switch to in-memory for custom ordering
+                .Select(p => new
+                {
+                    Item = p,
+                    OrderGroup = p.InterviewDate.HasValue && p.InterviewDate > now ? 0 :
+                                 !p.InterviewDate.HasValue && p.CreatedOn >= fifteenDaysAgo ? 1 : 2
+                })
+                .OrderBy(x => x.OrderGroup)
+                .ThenBy(x => x.OrderGroup == 1 ? -x.Item.CreatedOn?.Ticks : long.MaxValue) // Descending for group 1
+                .ThenBy(x => x.Item.InterviewDate ?? DateTime.MaxValue) // Optional: secondary sort for group 0
+                .Select(x => x.Item);
+
+            var data = query.Skip(offset).Take(limit).ToList();
+            var count = await service.GetAll().CountAsync();
+
+            var list = ToListingResponse(data, pageNo, count);
+            return NeoData(list);
+
+
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("PublicList")]
+        public async Task<IActionResult> PublicList([FromQuery] int pageNo = 0, [FromQuery] int cityId = 0, bool isITJOb = false)
         {
             try
             {
                 var loggedInUser = GetLoggedInUser();
                 int offset = WebHelper.DefaultGridPageSize * pageNo;
-                int limit = (pageSize == 0) ? offset + WebHelper.DefaultGridPageSize : pageSize;
+                // $45 this limit should come form settings
+                int limit = 40;
 
                 IQueryable<Jobdetail> query = service.GetAll().Include(p => p.JobLocation);
 
@@ -53,14 +86,33 @@ namespace App.Web.Controllers
                     query = query.Where(x => x.CreatedBy == loggedInUser.UserID);
                 }
 
-                var data = await query
-                    .OrderByDescending(p => p.InterviewDate)
-                    .Skip(offset)
-                    .Take(limit)
-                    .ToListAsync();
+                //var data = await query
+                //    .OrderByDescending(p => p.InterviewDate)
+                //    .Skip(offset)
+                //    .Take(limit)
+                //    .ToListAsync();
+                DateTime now = DateTime.Now;
+                DateTime fifteenDaysAgo = now.AddDays(-15);
 
-                var count = await service.GetAll().CountAsync(); // Optional: consider optimizing this
+                var data = service.GetAll()
+                           .Include(p => p.JobLocation)
+                           .AsEnumerable() // Switch to LINQ-to-Objects for custom ordering
+                           .Select(p => new
+                           {
+                               Item = p,
+                               OrderGroup = p.InterviewDate.HasValue && p.InterviewDate > now ? 0 :
+                                            !p.InterviewDate.HasValue && p.CreatedOn >= fifteenDaysAgo ? 1 : 2
+                           })
+                           .OrderBy(x => x.OrderGroup)
+                           .ThenBy(x => x.OrderGroup == 1 ? -(x.Item.CreatedOn?.Ticks ?? 0) : long.MaxValue)
+                           .ThenBy(x => x.Item.InterviewDate ?? DateTime.MaxValue)
+                           .Select(x => x.Item)
+                           .Skip(offset)
+                           .Take(limit)
+                           .ToList();
 
+
+                var count = await service.GetAll().CountAsync();
                 var list = ToListingResponse(data, pageNo, count);
                 return NeoData(list);
             }
