@@ -25,6 +25,7 @@ namespace App.Web.Controllers
         [Route("")]
         public async Task<IActionResult> List([FromQuery] int pageNo = 0)
         {
+            var loggedInUser = GetLoggedInUser();
             int offset = WebHelper.DefaultGridPageSize * pageNo;
             int limit = WebHelper.DefaultGridPageSize;
             DateTime now = DateTime.Now;
@@ -44,6 +45,11 @@ namespace App.Web.Controllers
                 .ThenBy(x => x.Item.InterviewDate ?? DateTime.MaxValue) // Optional: secondary sort for group 0
                 .Select(x => x.Item);
 
+            if (loggedInUser != null && loggedInUser.GroupID != 1)
+            {
+                query = query.Where(x => x.CreatedBy == loggedInUser.UserID);
+            }
+
             var data = query.Skip(offset).Take(limit).ToList();
             var count = await service.GetAll().CountAsync();
 
@@ -60,7 +66,6 @@ namespace App.Web.Controllers
         {
             try
             {
-                var loggedInUser = GetLoggedInUser();
                 int offset = WebHelper.DefaultGridPageSize * pageNo;
                 // $45 this limit should come form settings
                 int limit = 40;
@@ -77,13 +82,10 @@ namespace App.Web.Controllers
                 {
                     query = query.Where(j => j.JobLocationId == cityId);
                 }
+
                 if (isITJOb)
                 {
                     query = query.Where(j => j.IsITJob == isITJOb);
-                }
-                else if (loggedInUser != null && loggedInUser.GroupID != 1)
-                {
-                    query = query.Where(x => x.CreatedBy == loggedInUser.UserID);
                 }
 
                 //var data = await query
