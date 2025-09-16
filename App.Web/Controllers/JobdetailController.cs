@@ -29,7 +29,7 @@ namespace App.Web.Controllers
             int offset = WebHelper.DefaultGridPageSize * pageNo;
             int limit = WebHelper.DefaultGridPageSize;
             DateTime now = DateTime.Now;
-            DateTime fifteenDaysAgo = now.AddDays(-15);
+            DateTime fifteenDaysAgo = now.AddDays(-5);
 
             var query = service.GetAll()
                 .Include(p => p.JobLocation)
@@ -51,12 +51,10 @@ namespace App.Web.Controllers
             }
 
             var data = query.Skip(offset).Take(limit).ToList();
-            var count = await service.GetAll().CountAsync();
+            var count = query.ToList().Count;//await service.GetAll().CountAsync();
 
             var list = ToListingResponse(data, pageNo, count);
             return NeoData(list);
-
-
         }
 
         [AllowAnonymous]
@@ -94,7 +92,7 @@ namespace App.Web.Controllers
                 //    .Take(limit)
                 //    .ToListAsync();
                 DateTime now = DateTime.Now;
-                DateTime fifteenDaysAgo = now.AddDays(-15);
+                DateTime fifteenDaysAgo = now.AddDays(-5);
 
                 var data = service.GetAll()
                            .Include(p => p.JobLocation)
@@ -114,7 +112,7 @@ namespace App.Web.Controllers
                            .ToList();
 
 
-                var count = await service.GetAll().CountAsync();
+                var count = data.Count;//await service.GetAll().CountAsync();
                 var list = ToListingResponse(data, pageNo, count);
                 return NeoData(list);
             }
