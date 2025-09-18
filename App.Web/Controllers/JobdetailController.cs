@@ -1,13 +1,14 @@
-using App.Web.Fx;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using App.Entity;
+﻿using App.Entity;
 using App.Service;
+using App.Web.Fx;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Collections.Generic;
+using System.Drawing.Printing;
+using System.Linq;
+using System.Web;
 
 namespace App.Web.Controllers
 {
@@ -64,57 +65,54 @@ namespace App.Web.Controllers
         {
             try
             {
+                var pageSize = 50;
                 int offset = WebHelper.DefaultGridPageSize * pageNo;
-                // $45 this limit should come form settings
-                int limit = 40;
+                int limit = (pageSize == 0) ? offset + WebHelper.DefaultGridPageSize : pageSize;
+
+                DateTime today = DateTime.Today;
+                DateTime fiveDaysAgo = today.AddDays(-5);
 
                 IQueryable<Jobdetail> query = service.GetAll().Include(p => p.JobLocation);
 
+                // Location filter
                 if (cityId == -1)
                 {
                     var excludedLocationIds = new[] { 1, 2, 3, 4 };
                     query = query.Where(j => !excludedLocationIds.Contains(j.JobLocationId));
-
                 }
                 else if (cityId != 0)
                 {
                     query = query.Where(j => j.JobLocationId == cityId);
                 }
 
+                // IT Job filter
                 if (isITJOb)
                 {
                     query = query.Where(j => j.IsITJob == isITJOb);
                 }
 
-                //var data = await query
-                //    .OrderByDescending(p => p.InterviewDate)
-                //    .Skip(offset)
-                //    .Take(limit)
-                //    .ToListAsync();
-                DateTime now = DateTime.Now;
-                DateTime fifteenDaysAgo = now.AddDays(-5);
+                // Fetch all filtered data first
+                var allData = await query.ToListAsync();
 
-                var data = service.GetAll()
-                           .Include(p => p.JobLocation)
-                           .AsEnumerable() // Switch to LINQ-to-Objects for custom ordering
-                           .Select(p => new
-                           {
-                               Item = p,
-                               OrderGroup = p.InterviewDate.HasValue && p.InterviewDate > now ? 0 :
-                                            !p.InterviewDate.HasValue && p.CreatedOn >= fifteenDaysAgo ? 1 : 2
-                           })
-                           .OrderBy(x => x.OrderGroup)
-                           .ThenBy(x => x.OrderGroup == 1 ? -(x.Item.CreatedOn?.Ticks ?? 0) : long.MaxValue)
-                           .ThenBy(x => x.Item.InterviewDate ?? DateTime.MaxValue)
-                           .Select(x => x.Item)
-                           .Skip(offset)
-                           .Take(limit)
-                           .ToList();
+                var sortedData = allData
+                                .Select(j => new
+                                {
+                                    Job = j,
+                                    Priority = (j.InterviewDate.HasValue && j.InterviewDate.Value > today.AddDays(-1)) ? 1 :
+                                               (!j.InterviewDate.HasValue && j.CreatedOn > today.AddDays(-5)) ? 2 : 3,
+                                    SortKey = j.InterviewDate ?? j.CreatedOn
+                                })
+                                .OrderBy(x => x.Priority)
+                                .ThenBy(x => x.SortKey)
+                                .Select(x => x.Job).Take(limit)
+                                .ToList();
 
 
-                var count = data.Count;//await service.GetAll().CountAsync();
-                var list = ToListingResponse(data, pageNo, count);
+                var list = new NeoListingResponse<Jobdetail>();
+                list.Data = sortedData;
+
                 return NeoData(list);
+
             }
             catch (Exception ex)
             {
