@@ -98,7 +98,7 @@ namespace App.Web.Controllers
                                 .Select(j => new
                                 {
                                     Job = j,
-                                    Priority = (j.InterviewDate.HasValue && j.InterviewDate.Value.AddHours(6) > today) ? 1 :
+                                    Priority = (j.InterviewDate.HasValue && j.InterviewDate.Value > today) ? 1 :
                                                (!j.InterviewDate.HasValue && j.CreatedOn > today.AddDays(-5)) ? 2 : 3,
                                     SortKey = j.InterviewDate ?? j.CreatedOn
                                 })
