@@ -94,18 +94,19 @@ namespace App.Web.Controllers
                 // Fetch all filtered data first
                 var allData = await query.ToListAsync();
 
-                var sortedData = allData
-                                .Select(j => new
-                                {
-                                    Job = j,
-                                    Priority = (j.InterviewDate.HasValue && j.InterviewDate.Value > today) ? 1 :
-                                               (!j.InterviewDate.HasValue && j.CreatedOn > today.AddDays(-5)) ? 2 : 3,
-                                    SortKey = j.InterviewDate ?? j.CreatedOn
-                                })
-                                .OrderBy(x => x.Priority)
-                                .ThenBy(x => x.SortKey)
-                                .Select(x => x.Job).Take(limit)
-                                .ToList();
+                var newJobsList = allData.Where(j => j.InterviewDate.HasValue && j.InterviewDate.Value > DateTime.Now)
+                                         .OrderBy(j => j.InterviewDate)
+                                         .ToList();
+                var primejobsList = allData.Where(j => !j.InterviewDate.HasValue && (j.CreatedOn > fiveDaysAgo))
+                                         .OrderBy(j => j.CreatedOn)
+                                         .ToList();
+                var priorityJobs = newJobsList.Concat(primejobsList).ToList();
+
+
+                var priorityJobIds = priorityJobs.Select(j => j.JobDetailId).ToHashSet();
+                var remainingJobs = allData.Where(j => !priorityJobIds.Contains(j.JobDetailId)).ToList().OrderBy(j => j.ModifiedOn).ToList();
+
+                var sortedData = priorityJobs.Concat(remainingJobs).Skip(offset).Take(limit).ToList();
 
 
                 var list = new NeoListingResponse<Jobdetail>();
@@ -141,6 +142,7 @@ namespace App.Web.Controllers
             var loggedInUser = GetLoggedInUser();
             obj.CreatedBy = loggedInUser.UserID;
             obj.CreatedOn = DateTime.Now;
+            obj.InterviewDate = obj.InterviewDate?.Date.AddHours(16);
             var success = await service.Insert(obj);
             var resp = new NeoApiResponse();
             if (success)
@@ -172,6 +174,7 @@ namespace App.Web.Controllers
             var loggedInUser = GetLoggedInUser();
             obj.ModifiedBy = loggedInUser.UserID;
             obj.ModifiedOn = DateTime.Now;
+            obj.InterviewDate = obj.InterviewDate?.Date.AddHours(16);
             var success = await service.Update(obj);
             var resp = new NeoApiResponse();
             if (success)
