@@ -98,7 +98,7 @@ namespace App.Web.Controllers
                                          .OrderBy(j => j.InterviewDate)
                                          .ToList();
                 var primejobsList = allData.Where(j => !j.InterviewDate.HasValue && (j.CreatedOn > fiveDaysAgo))
-                                         .OrderBy(j => j.CreatedOn)
+                                         .OrderByDescending(j => j.CreatedOn)
                                          .ToList();
                 var priorityJobs = newJobsList.Concat(primejobsList).ToList();
 
