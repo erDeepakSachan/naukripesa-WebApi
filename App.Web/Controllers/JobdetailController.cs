@@ -1,5 +1,6 @@
 ﻿using App.Entity;
 using App.Service;
+using App.Util;
 using App.Web.Fx;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -93,8 +94,8 @@ namespace App.Web.Controllers
 
                 // Fetch all filtered data first
                 var allData = await query.ToListAsync();
-
-                var newJobsList = allData.Where(j => j.InterviewDate.HasValue && j.InterviewDate.Value > DateTime.Now)
+                var ttt = DateTime.Now.ToIST();
+                var newJobsList = allData.Where(j => j.InterviewDate.HasValue && j.InterviewDate.Value > DateTime.Now.ToIST())
                                          .OrderBy(j => j.InterviewDate)
                                          .ToList();
                 var primejobsList = allData.Where(j => !j.InterviewDate.HasValue && (j.CreatedOn > fiveDaysAgo))
@@ -104,7 +105,7 @@ namespace App.Web.Controllers
 
 
                 var priorityJobIds = priorityJobs.Select(j => j.JobDetailId).ToHashSet();
-                var remainingJobs = allData.Where(j => !priorityJobIds.Contains(j.JobDetailId)).ToList().OrderBy(j => j.ModifiedOn).ToList();
+                var remainingJobs = allData.Where(j => !priorityJobIds.Contains(j.JobDetailId)).ToList().OrderBy(j => j.CreatedOn).ToList();
 
                 var sortedData = priorityJobs.Concat(remainingJobs).Skip(offset).Take(limit).ToList();
 
