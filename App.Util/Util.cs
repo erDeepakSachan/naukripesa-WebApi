@@ -37,7 +37,7 @@ namespace App.Util
             {
                 var fromAddress = new MailAddress("support@naukripesa.com", "Naukri-Pesa");
                 var toAddress = new MailAddress(tomail);
-                const string fromPassword = "Deepak@123";
+                const string fromPassword = "naukripesa@support";
 
                 var smtp = new SmtpClient
                 {
