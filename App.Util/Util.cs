@@ -42,7 +42,7 @@ namespace App.Util
                 var smtp = new SmtpClient
                 {
                     Host = "smtpout.secureserver.net",
-                    Port = 587, // TLS Port
+                    Port = 465, //587, // TLS Port
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
                     UseDefaultCredentials = false,
