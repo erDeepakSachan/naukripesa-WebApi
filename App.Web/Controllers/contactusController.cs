@@ -58,7 +58,7 @@ namespace App.Web.Controllers
                 try
                 {
                     var toEmail = commonService.GetSettingValueFromDb("EnquiryReceiverMail");
-                    var emailSend = Utility.SendMail(toEmail, "Enquiry From ContactUs Page", obj.Message);
+                    var emailSend = Utility.SendEmailViaResend(toEmail, "Enquiry From ContactUs Page", obj.Message);
                 }
                 catch (Exception)
                 {

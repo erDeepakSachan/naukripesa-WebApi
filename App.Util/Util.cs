@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Mail;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
+
 
 namespace App.Util
 {
@@ -15,7 +15,7 @@ namespace App.Util
             try
             {
                 var regOtp = GetOTP().ToString();
-                var isMailSent = SendMail(tomail, "Registration OTP", regOtp);
+                var isMailSent = SendEmailViaResend(tomail, "Registration OTP", regOtp).Result; // Await the Task<bool> result
                 if (isMailSent)
                 {
                     return (isSucess: true, otp: regOtp);
@@ -57,7 +57,7 @@ namespace App.Util
                 })
                 {
                     smtp.Send(message);
-                    return  true;
+                    return true;
                 }
             }
             catch (Exception ex)
@@ -65,6 +65,26 @@ namespace App.Util
                 return false;
             }
         }
+
+        public static async Task<bool> SendEmailViaResend(string toEmail, string sub, string body)
+        {
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "re_PPnNqqL1_3vuxvKexqmZtCM2Hr9HMY3yP");
+
+            var payload = new
+            {
+                from = "Naukri-Pesa <support@naukripesa.com>",
+                to = toEmail,
+                subject = sub,
+                html = body
+            };
+
+            var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("https://api.resend.com/emails", content);
+
+            return response.StatusCode == System.Net.HttpStatusCode.OK;
+        }
+
 
         private static int GetOTP() {
             int otp = 0;
