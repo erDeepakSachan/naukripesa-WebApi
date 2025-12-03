@@ -139,7 +139,7 @@ namespace App.Web.Controllers
                 }
 
                 resp = isDataSavedInDB
-                    ? resp.SuccessResponse(null, "OTP has been sent to your email address.")
+                    ? resp.SuccessResponse(null, "OTP has been sent to your email. If you are not getting OTP in inbox, Please check Spam.")
                     : resp.ErrorResponse("Failed to save OTP in database.");
             }
             catch (Exception)
